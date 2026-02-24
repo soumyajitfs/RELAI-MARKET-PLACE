@@ -3,16 +3,16 @@
    Premium Enterprise UI — Firstsource relAI Platform
    ===================================================== */
 
-/* ─── Google Font import (Inter for a clean corporate look) ─── */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+/* ─── Google Font import (Chivo as requested) ─── */
+@import url('https://fonts.googleapis.com/css2?family=Chivo:wght@300;400;500;600;700;800;900&display=swap');
 
 /* ─── Design Tokens / CSS Variables ─── */
 :root {
   /* Primary Colors */
-  --primary-dark: #1B1F4B;
-  --primary-dark-hover: #252A60;
-  --primary-orange: #DF6014;
-  --primary-orange-light: #F2A065;
+  --primary-dark: #13338E;
+  --primary-dark-hover: #0F2A74;
+  --primary-orange: #FF4400;
+  --primary-orange-light: #FF4400;
   --primary-orange-dark: #B84A0E;
   
   /* Accent Colors */
@@ -22,13 +22,13 @@
   
   /* Neutral Colors */
   --white: #FFFFFF;
-  --off-white: #FAFBFE;
+  --off-white: #F7F7F7;
   --gray-50: #f8f9ff;
-  --gray-100: #F1F3F9;
+  --gray-100: #D0E6FB;
   --gray-200: #E6E9F2;
   --gray-300: #D1D5E4;
   --gray-border: #E2E5F1;
-  --text-dark: #1E293B;
+  --text-dark: #000000;
   --text-secondary: #475569;
   --text-muted: #94A3B8;
   
@@ -72,7 +72,7 @@
 }
 
 html, body {
-  font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Chivo', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
   background-color: var(--off-white);
   color: var(--text-dark);
   margin: 0;
@@ -1561,4 +1561,50 @@ html, body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Requested style compatibility block */
+.header {
+  width: 904px;
+  height: 57px;
+  background: linear-gradient(90deg, #D2E7FC 0%, #FFFFFF 51%);
+}
+
+.solution-name {
+  font-size: 24px;
+  font-weight: 400;
+  color: #000000;
+}
+
+.button {
+  width: 69.5px;
+  height: 28.5px;
+  background-color: #13338E;
+  font-size: 12px;
+  color: #FFFFFF;
+}
+
+.menu-container {
+  background-color: #FFFFFF;
+  font-size: 14px;
+}
+
+.menu-item {
+  color: #000000;
+  background-color: transparent;
+}
+
+.menu-item-selected {
+  color: #FFFFFF;
+  background-color: #FF4400;
+}
+
+.screen-heading {
+  background-color: #D0E6FB;
+  font-size: 12px;
+  color: #13338E;
+}
+
+.screen-background {
+  background-color: #F7F7F7;
 }

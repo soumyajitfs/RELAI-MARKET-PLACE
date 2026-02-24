@@ -3,7 +3,7 @@
 /* ============================================= */
 .shap-analysis-section {
   margin-top: 28px;
-  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-family: inherit;
 }
 
 .shap-analysis-section hr {
