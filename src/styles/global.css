@@ -39,10 +39,10 @@
   --danger: #EF4444;
   
   /* Gradients */
-  --gradient-orange: linear-gradient(90deg, #B84A0E 0%, #DF6014 45%, #F2A065 100%);
-  --gradient-card-header: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-orange: linear-gradient(90deg, #FF4400 0%, #FF4400 100%);
+  --gradient-card-header: linear-gradient(90deg, #D2E7FC 0%, #FFFFFF 51%);
   --gradient-sidebar: linear-gradient(180deg, #0D0F1E 0%, #1B1F4B 35%, #252A60 65%, #1B1F4B 100%);
-  --gradient-dark-blue: linear-gradient(135deg, #1B1F4B 0%, #2A2F5D 100%);
+  --gradient-dark-blue: linear-gradient(135deg, #13338E 0%, #13338E 100%);
   --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
   
   /* Shadows (layered for depth) */
@@ -176,8 +176,8 @@ html, body {
 
 .sidebar {
   width: 280px;
-  background: var(--gradient-sidebar);
-  color: white;
+  background: linear-gradient(180deg, #D2E7FC 0%, #EAF3FF 45%, #FFFFFF 100%);
+  color: #000000;
   position: fixed;
   top: 0;
   left: 0;
@@ -202,13 +202,8 @@ html, body {
   right: 0;
   width: 2px;
   height: 100%;
-  background: linear-gradient(to bottom,
-    var(--primary-orange) 0%,
-    var(--accent-purple) 40%,
-    var(--accent-teal) 70%,
-    var(--primary-dark) 100%
-  );
-  opacity: 0.7;
+  background: linear-gradient(to bottom, #D0E6FB 0%, #D2E7FC 100%);
+  opacity: 1;
 }
 
 /* Fixed toggle button */
@@ -216,9 +211,9 @@ html, body {
   position: fixed;
   top: 50px;
   left: 236px;
-  background: var(--primary-dark);
-  border: 1px solid rgba(255,255,255,0.15);
-  color: rgba(255,255,255,0.8);
+  background: #D2E7FC;
+  border: 1px solid #bcd7f5;
+  color: #13338E;
   width: 28px;
   height: 28px;
   border-radius: var(--radius-sm);
@@ -233,9 +228,9 @@ html, body {
 }
 
 .sidebar-toggle-fixed:hover {
-  background: var(--primary-dark-hover);
-  color: white;
-  border-color: rgba(255,255,255,0.2);
+  background: #c2ddfb;
+  color: #13338E;
+  border-color: #a8ccf1;
 }
 
 .sidebar-toggle-fixed.sidebar-closed {
@@ -246,7 +241,7 @@ html, body {
 .sidebar-header {
   text-align: center;
   padding: 36px 24px 28px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid #d7e8fb;
 }
 
 .sidebar-logo {
@@ -260,15 +255,12 @@ html, body {
   font-weight: 800;
   margin: 0 0 6px;
   letter-spacing: -0.3px;
-  background: linear-gradient(90deg, var(--accent-purple), var(--primary-orange-light));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #000000;
 }
 
 .sidebar-subtitle {
   font-size: 11px;
-  color: rgba(255,255,255,0.45);
+  color: #000000;
   text-transform: uppercase;
   letter-spacing: 2px;
   margin: 0;
@@ -291,7 +283,7 @@ html, body {
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 2px;
-  color: rgba(255, 255, 255, 0.5);
+  color: #000000;
   margin: 0;
   font-weight: 700;
 }
@@ -306,20 +298,20 @@ html, body {
   width: 100%;
   padding: 11px 16px;
   border-radius: var(--radius-sm);
-  border: 1px solid rgba(255,255,255,0.12);
+  border: 1px solid #c6dcf6;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   transition: all var(--transition-normal);
   text-align: center;
-  background: rgba(255,255,255,0.08);
-  color: rgba(255,255,255,0.85);
+  background: #eaf3ff;
+  color: #000000;
   letter-spacing: 0.2px;
 }
 
 .sidebar-btn:hover {
-  background: rgba(255,255,255,0.15);
-  color: white;
+  background: #d8eaff;
+  color: #000000;
   transform: none;
 }
 
@@ -539,7 +531,7 @@ html, body {
 .marketplace-card .card-header h5 {
   font-size: 15px;
   font-weight: 700;
-  color: white;
+  color: #000000;
   margin: 0;
   text-align: center;
   letter-spacing: 0.2px;

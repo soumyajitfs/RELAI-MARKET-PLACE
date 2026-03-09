@@ -17,6 +17,15 @@ const marketplaceCards = [
     enabled: false
   },
   {
+    id: 'collectability-model',
+    title: 'Collectability Model',
+    description: 'Classifies healthcare claims by collectibility to prioritize high-value claims and improve collections efficiency.',
+    vertical: 'Provider',
+    modelType: 'Classification',
+    enabled: true,
+    route: '/collectability-model'
+  },
+  {
     id: 'payer-collectability',
     title: 'Payer collectability',
     description: 'Segments accounts based on financial risk and expected recovery probability.',
@@ -47,15 +56,17 @@ const marketplaceCards = [
     description: 'Predicts which telecom customers are likely to churn using usage patterns.',
     vertical: 'BFS',
     modelType: 'Classification',
-    enabled: false
+    enabled: true,
+    route: '/aml-alert'
   },
   {
     id: 'customer-churn',
     title: 'Customer churn prediction',
-    description: 'Predict customers likely to churn to enable effective retention strategies.',
+    description: 'Predict which subscribers are likely to churn before they leave.',
     vertical: 'Telecom',
     modelType: 'Classification',
-    enabled: false
+    enabled: true,
+    route: '/customer-churn'
   },
   {
     id: 'sentiment-analytics',

@@ -1,6 +1,57 @@
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
 module.exports = function (app) {
+  // Collectability backend — must come BEFORE the general /api proxy
+  app.use(
+    '/api/collectability',
+    createProxyMiddleware({
+      target: 'https://ml-market-backend-collectability.azurewebsites.net',
+      changeOrigin: true,
+      secure: false,
+      logLevel: 'debug',
+      onProxyRes: function (proxyRes, req, res) {
+        console.log('[Proxy-Collectability] Response from:', req.url, 'Status:', proxyRes.statusCode);
+      },
+      onError: function (err, req, res) {
+        console.error('[Proxy-Collectability] Error:', err.message);
+      },
+    })
+  );
+
+  // Customer Churn backend — must come BEFORE the general /api proxy
+  app.use(
+    '/api/churn',
+    createProxyMiddleware({
+      target: 'https://ml-market-backend-customer-churn.azurewebsites.net',
+      changeOrigin: true,
+      secure: false,
+      logLevel: 'debug',
+      onProxyRes: function (proxyRes, req, res) {
+        console.log('[Proxy-Churn] Response from:', req.url, 'Status:', proxyRes.statusCode);
+      },
+      onError: function (err, req, res) {
+        console.error('[Proxy-Churn] Error:', err.message);
+      },
+    })
+  );
+
+  // AML backend — must come BEFORE the general /api proxy
+  app.use(
+    '/api/aml',
+    createProxyMiddleware({
+      target: 'https://ml-market-backend-aml.azurewebsites.net',
+      changeOrigin: true,
+      secure: false,
+      logLevel: 'debug',
+      onProxyRes: function (proxyRes, req, res) {
+        console.log('[Proxy-AML] Response from:', req.url, 'Status:', proxyRes.statusCode);
+      },
+      onError: function (err, req, res) {
+        console.error('[Proxy-AML] Error:', err.message);
+      },
+    })
+  );
+
   // RPC (Right Party Contact) backend — must come BEFORE the general /api proxy
   app.use(
     '/api/amex',
