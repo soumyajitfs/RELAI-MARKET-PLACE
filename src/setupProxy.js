@@ -1,6 +1,23 @@
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
 module.exports = function (app) {
+  // Sales Optimization backend — must come BEFORE the general /api proxy
+  app.use(
+    '/api/sales',
+    createProxyMiddleware({
+      target: 'https://ml-market-backend-sales-optimization.azurewebsites.net',
+      changeOrigin: true,
+      secure: false,
+      logLevel: 'debug',
+      onProxyRes: function (proxyRes, req, res) {
+        console.log('[Proxy-Sales] Response from:', req.url, 'Status:', proxyRes.statusCode);
+      },
+      onError: function (err, req, res) {
+        console.error('[Proxy-Sales] Error:', err.message);
+      },
+    })
+  );
+
   // Collectability backend — must come BEFORE the general /api proxy
   app.use(
     '/api/collectability',

@@ -51,6 +51,15 @@ const marketplaceCards = [
     enabled: false
   },
   {
+    id: 'sales-optimization',
+    title: 'Sales Optimization',
+    description: 'Improve sales by identifying high-potential accounts, boosting engagement, and recommending prioritized products',
+    vertical: 'Telecom',
+    modelType: 'Classification',
+    enabled: true,
+    route: '/sales-optimization'
+  },
+  {
     id: 'aml-alert',
     title: 'AML – Alert Prioritization',
     description: 'Predicts which telecom customers are likely to churn using usage patterns.',

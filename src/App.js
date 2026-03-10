@@ -9,6 +9,7 @@ import RpcPage from './pages/RpcPage';
 import AmlAlertPage from './pages/AmlAlertPage';
 import CustomerChurnPage from './pages/CustomerChurnPage';
 import CollectabilityPage from './pages/CollectabilityPage';
+import SalesOptimizationPage from './pages/SalesOptimizationPage';
 import UnderDevelopmentPage from './pages/UnderDevelopmentPage';
 
 // Import styles
@@ -29,6 +30,7 @@ function App() {
             <Route path="/aml-alert" element={<AmlAlertPage />} />
             <Route path="/customer-churn" element={<CustomerChurnPage />} />
             <Route path="/collectability-model" element={<CollectabilityPage />} />
+            <Route path="/sales-optimization" element={<SalesOptimizationPage />} />
             <Route path="/under-development/:cardTitle?" element={<UnderDevelopmentPage />} />
           </Routes>
         </MainLayout>
