@@ -62,7 +62,7 @@ const transformPredictionResult = (apiResult) => {
   const probabilityPercent = pct ? parseFloat(pct) : null;
 
   return {
-    Customer_Account: apiResult.Customer_Account,
+    Customer_Account: String(apiResult.Customer_Account),
     probability: apiResult.probability,
     probabilityPercent,
     category: apiResult.category,
@@ -115,12 +115,13 @@ export const predictSalesAccounts = async (rows) => {
 
   const queues = new Map();
   transformed.forEach((item) => {
-    if (!queues.has(item.Customer_Account)) queues.set(item.Customer_Account, []);
-    queues.get(item.Customer_Account).push(item);
+    const key = String(item.Customer_Account);
+    if (!queues.has(key)) queues.set(key, []);
+    queues.get(key).push(item);
   });
 
   return rows.map((row) => {
-    const account = row.Customer_Account;
+    const account = String(row.Customer_Account);
     const queue = queues.get(account);
     const pred = queue && queue.length ? queue.shift() : null;
     return pred ? { ...row, ...pred } : row;

@@ -55,7 +55,12 @@ const SalesDataTable = ({
   const inputColumns = useMemo(() => {
     const sample = displayRows[0] || baseRows[0];
     if (!sample) return [];
-    return Object.keys(sample).filter(key => !INTERNAL_KEYS.has(key));
+    return Object.keys(sample).filter((key) => {
+      if (INTERNAL_KEYS.has(key)) return false;
+      // Customer account is already shown in the dedicated first column.
+      if (key.toLowerCase() === 'customer_account') return false;
+      return true;
+    });
   }, [displayRows, baseRows]);
 
   const handleFieldChange = (rowId, field, value) => {
@@ -68,6 +73,24 @@ const SalesDataTable = ({
     if (!editEnabled) return value ?? '—';
 
     const rule = fieldRules?.[key];
+    if (rule?.type === 'number-string') {
+      return (
+        <input
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          value={value ?? ''}
+          style={{ width: '100%' }}
+          onChange={(e) => handleFieldChange(row.__rowId, key, e.target.value)}
+          onBlur={(e) => {
+            if (!validateField) return;
+            const msg = validateField(key, e.target.value);
+            if (msg) showToast({ message: msg, type: 'warning' });
+          }}
+        />
+      );
+    }
+
     if (rule?.type === 'enum') {
       return (
         <select
@@ -168,7 +191,7 @@ const SalesDataTable = ({
                           onChange={() => onSelectRow(row.__rowId)}
                         />
                       </td>
-                      <td><strong>{row.Customer_Account}</strong></td>
+                      <td>{editEnabled ? renderCell(row, 'Customer_Account') : <strong>{row.Customer_Account}</strong>}</td>
                       {renderInputCells(row)}
                     </tr>
                   );
@@ -205,7 +228,6 @@ const SalesDataTable = ({
               <th style={{ width: showInputCols ? '170px' : '18%' }}>Probability %</th>
               <th style={{ width: showInputCols ? '110px' : '12%' }}>Category</th>
               <th style={{ width: showInputCols ? '260px' : '22%' }}>Recommended Products</th>
-              <th style={{ width: showInputCols ? '520px' : '34%' }}>Recommendation Reason</th>
               {showInputCols && inputColumns.map((key) => (
                 <th key={`out-${key}`} style={{ width: `${getColumnWidth(key)}px` }}>{key}</th>
               ))}
@@ -247,14 +269,32 @@ const SalesDataTable = ({
                           {row.category}
                         </span>
                       </td>
-                      <td>{Array.isArray(row.recommended_products) ? row.recommended_products.join(', ') : '—'}</td>
-                      <td style={{ whiteSpace: 'normal', overflow: 'visible', textOverflow: 'clip', lineHeight: 1.4 }}>
-                        {row.recommendation_reason || '—'}
+                      <td>
+                        {(() => {
+                          const raw = row.recommended_products;
+                          const options = Array.isArray(raw)
+                            ? raw
+                            : typeof raw === 'string'
+                              ? raw.split(',').map((item) => item.trim()).filter(Boolean)
+                              : [];
+
+                          if (!options.length) return '—';
+
+                          return (
+                            <select defaultValue={options[0]} style={{ width: '100%' }}>
+                              {options.map((product) => (
+                                <option key={`${row.__rowId}-${product}`} value={product}>
+                                  {product}
+                                </option>
+                              ))}
+                            </select>
+                          );
+                        })()}
                       </td>
                     </>
                   ) : (
                     <>
-                      <td></td><td></td><td></td><td></td>
+                      <td></td><td></td><td></td>
                     </>
                   )}
                   {showInputCols && renderInputCells(row)}

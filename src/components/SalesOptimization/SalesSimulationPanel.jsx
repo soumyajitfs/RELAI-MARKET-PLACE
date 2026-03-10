@@ -185,7 +185,16 @@ const validateSalesField = (field, value) => {
   if (!rule) return null;
 
   if (rule.type === 'enum') {
-    if (!rule.options.includes(String(value))) {
+    const normalizeEnumValue = (input) => String(input ?? '')
+      .replace(/\u00A0/g, ' ')
+      .replace(/\s*\+\s*/g, '+')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    const normalizedValue = normalizeEnumValue(value);
+    const normalizedOptions = rule.options.map(normalizeEnumValue);
+
+    if (!normalizedOptions.includes(normalizedValue)) {
       return `"${rule.label}" must be one of the accepted values.`;
     }
     return null;
