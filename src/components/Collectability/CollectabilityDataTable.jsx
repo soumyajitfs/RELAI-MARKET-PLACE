@@ -9,6 +9,63 @@ const INTERNAL_KEYS = new Set([
   'shapValues',
 ]);
 
+const FORCE_DROPDOWN_FIELDS = new Set([
+  'Bill Type_111',
+  'Bill Type_113',
+  'Bill Type_123',
+  'Bill Type_181',
+  'Bill Type_185',
+  'Bill Type_213',
+  'Bill Type_313',
+  'Bill Type_372',
+  'Bill Type_713',
+  'Bill Type_785',
+  'Bill Type_Others',
+  'CPT Category_AG',
+  'CPT Category_AJ',
+  'CPT Category_AQ',
+  'CPT Category_AS',
+  'CPT Category_E&M',
+  'CPT Category_Medicine',
+  'CPT Category_Others',
+  'CPT Category_P',
+  'CPT Category_Pathology & Lab',
+  'CPT Category_Radiology',
+  'CPT Category_Surgery',
+  'RevCode_Category_Clinic',
+  'RevCode_Category_Diagnostics',
+  'RevCode_Category_ER',
+  'RevCode_Category_Imaging',
+  'RevCode_Category_Lab',
+  'RevCode_Category_Others',
+  'RevCode_Category_Pharmacy',
+  'RevCode_Category_Professional Fees',
+  'RevCode_Category_Surgery',
+  'RevCode_Category_Therapy',
+  'unique_carc_count',
+  'unique_rarc_count',
+  'unique_bill_seq_count',
+  'unique_bill_type_count',
+  'Denial Class_Addl Doc',
+  'Denial Class_Auth',
+  'Denial Class_COB',
+  'Denial Class_Coding',
+  'Denial Class_Duplicate',
+  'Denial Class_Med Necc',
+  'Denial Class_Non - Covered',
+  'Denial Class_Others',
+  'Denial Class_Registration',
+  'CLIENT CODE',
+  'FINANCIAL CLASS',
+  'INSURANCE LEVEL 1',
+]);
+
+const buildRangeOptions = (min, max) => {
+  if (!Number.isInteger(min) || !Number.isInteger(max)) return [];
+  if (max < min || max - min > 100) return [];
+  return Array.from({ length: max - min + 1 }, (_, i) => min + i);
+};
+
 const getCategoryClass = (category) => {
   if (category === 'High') return 'high';
   if (category === 'Medium') return 'medium';
@@ -44,7 +101,12 @@ const CollectabilityDataTable = ({
   const inputColumns = useMemo(() => {
     const sample = displayRows[0] || baseRows[0];
     if (!sample) return [];
-    return Object.keys(sample).filter(key => !INTERNAL_KEYS.has(key));
+    return Object.keys(sample).filter((key) => {
+      if (INTERNAL_KEYS.has(key)) return false;
+      // Client Reference is already shown in dedicated first column.
+      if (key.toLowerCase() === 'client reference number') return false;
+      return true;
+    });
   }, [displayRows, baseRows]);
 
   const handleFieldChange = (rowId, field, value) => {
@@ -56,8 +118,37 @@ const CollectabilityDataTable = ({
     const value = row[key];
     if (!editEnabled) return value ?? '—';
 
+    const rule = fieldRules?.[key];
+    const shouldForceDropdown = FORCE_DROPDOWN_FIELDS.has(key);
+    const dropdownOptions = rule?.type === 'enum'
+      ? (rule.values || [])
+      : buildRangeOptions(rule?.min, rule?.max);
+
+    if (shouldForceDropdown && dropdownOptions.length > 0) {
+      return (
+        <select
+          value={value ?? ''}
+          onChange={(e) => {
+            const raw = e.target.value;
+            const nextValue = rule?.type === 'int' ? parseInt(raw, 10) : raw;
+            handleFieldChange(row.__rowId, key, Number.isNaN(nextValue) ? raw : nextValue);
+          }}
+          onBlur={(e) => {
+            if (!validateField) return;
+            const msg = validateField(key, e.target.value);
+            if (msg) showToast({ message: msg, type: 'warning' });
+          }}
+        >
+          {dropdownOptions.map((opt) => (
+            <option key={`${key}-${opt}`} value={opt}>
+              {opt}
+            </option>
+          ))}
+        </select>
+      );
+    }
+
     if (typeof value === 'number') {
-      const rule = fieldRules?.[key];
       return (
         <input
           type="number"

@@ -10,6 +10,7 @@ import AmlAlertPage from './pages/AmlAlertPage';
 import CustomerChurnPage from './pages/CustomerChurnPage';
 import CollectabilityPage from './pages/CollectabilityPage';
 import SalesOptimizationPage from './pages/SalesOptimizationPage';
+import LatePaymentInterestPage from './pages/LatePaymentInterestPage';
 import UnderDevelopmentPage from './pages/UnderDevelopmentPage';
 
 // Import styles
@@ -31,6 +32,7 @@ function App() {
             <Route path="/customer-churn" element={<CustomerChurnPage />} />
             <Route path="/collectability-model" element={<CollectabilityPage />} />
             <Route path="/sales-optimization" element={<SalesOptimizationPage />} />
+            <Route path="/late-payment-interest" element={<LatePaymentInterestPage />} />
             <Route path="/under-development/:cardTitle?" element={<UnderDevelopmentPage />} />
           </Routes>
         </MainLayout>

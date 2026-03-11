@@ -112,11 +112,12 @@ const marketplaceCards = [
   },
   {
     id: 'claims-late-payment',
-    title: 'Claims Late Payment Propensity',
-    description: 'Predicts claims likely delayed, triggering state and federal interest payments.',
+    title: 'Late payment interest predictive model',
+    description: 'Scores claims on Day 1 and classifies them into High, Medium, or Low risk for late interest penalties, helping operations prioritize inventory',
     vertical: 'Payer',
     modelType: 'Classification',
-    enabled: false
+    enabled: true,
+    route: '/late-payment-interest'
   }
 ];
 

@@ -6,21 +6,7 @@ const INTERNAL_KEYS = new Set([
   'probabilityPercent',
   'category',
   'shapValues',
-  'recommended_products',
-  'recommendation_reason',
 ]);
-
-const COLUMN_WIDTHS = {
-  Agent_tenure: 260,
-  Location: 180,
-  Services: 420,
-  channel: 160,
-  Customer_Tenure_Segment: 220,
-  pitchtype: 200,
-  primaryproductoffered: 260,
-};
-
-const getColumnWidth = (key) => COLUMN_WIDTHS[key] || 150;
 
 const getCategoryClass = (category) => {
   if (category === 'High') return 'high';
@@ -34,7 +20,7 @@ const getCategoryColor = (category) => {
   return '#c62828';
 };
 
-const SalesDataTable = ({
+const LpiDataTable = ({
   rows,
   draftRows,
   setDraftRows,
@@ -50,21 +36,18 @@ const SalesDataTable = ({
   const [showInputCols, setShowInputCols] = useState(false);
 
   const baseRows = editEnabled ? draftRows : rows;
-  const displayRows = hasOutput ? baseRows.filter(r => r.probabilityPercent != null) : baseRows;
+  const displayRows = hasOutput
+    ? baseRows.filter((r) => r.probabilityPercent != null)
+    : baseRows;
 
   const inputColumns = useMemo(() => {
     const sample = displayRows[0] || baseRows[0];
     if (!sample) return [];
-    return Object.keys(sample).filter((key) => {
-      if (INTERNAL_KEYS.has(key)) return false;
-      // Customer account is already shown in the dedicated first column.
-      if (key.toLowerCase() === 'customer_account') return false;
-      return true;
-    });
+    return Object.keys(sample).filter((key) => !INTERNAL_KEYS.has(key) && key !== 'clmId');
   }, [displayRows, baseRows]);
 
   const handleFieldChange = (rowId, field, value) => {
-    setDraftRows(prev => prev.map(r => (r.__rowId === rowId ? { ...r, [field]: value } : r)));
+    setDraftRows((prev) => prev.map((r) => (r.__rowId === rowId ? { ...r, [field]: value } : r)));
     setHasUnappliedChanges(true);
   };
 
@@ -72,29 +55,16 @@ const SalesDataTable = ({
     const value = row[key];
     if (!editEnabled) return value ?? '—';
 
-    const rule = fieldRules?.[key];
-    if (rule?.type === 'number-string') {
-      return (
-        <input
-          type="text"
-          inputMode="numeric"
-          pattern="[0-9]*"
-          value={value ?? ''}
-          style={{ width: '100%' }}
-          onChange={(e) => handleFieldChange(row.__rowId, key, e.target.value)}
-          onBlur={(e) => {
-            if (!validateField) return;
-            const msg = validateField(key, e.target.value);
-            if (msg) showToast({ message: msg, type: 'warning' });
-          }}
-        />
-      );
-    }
+    const normalizedKey = String(key).replace(/[^A-Za-z0-9]/g, '').toLowerCase();
+    const rule = fieldRules?.[normalizedKey];
 
     if (rule?.type === 'enum') {
+      const normalizedValue = String(value ?? '').trim();
+      const hasMatch = rule.options.some((opt) => String(opt).trim() === normalizedValue);
+      const currentValue = hasMatch ? normalizedValue : '';
       return (
         <select
-          value={value ?? ''}
+          value={currentValue}
           style={{ width: '100%' }}
           onChange={(e) => handleFieldChange(row.__rowId, key, e.target.value)}
           onBlur={(e) => {
@@ -103,8 +73,34 @@ const SalesDataTable = ({
             if (msg) showToast({ message: msg, type: 'warning' });
           }}
         >
-          {rule.options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+          {!hasMatch && <option value="" disabled>Select value</option>}
+          {rule.options.map((opt) => (
+            <option key={opt} value={opt}>{opt}</option>
+          ))}
         </select>
+      );
+    }
+
+    if (rule?.type === 'date') {
+      const dateValue = value == null
+        ? ''
+        : String(value).includes('T')
+          ? String(value).split('T')[0]
+          : String(value);
+      return (
+        <input
+          type="date"
+          value={dateValue}
+          min={rule.min}
+          max={rule.max}
+          style={{ width: '100%' }}
+          onChange={(e) => handleFieldChange(row.__rowId, key, e.target.value)}
+          onBlur={(e) => {
+            if (!validateField) return;
+            const msg = validateField(key, e.target.value);
+            if (msg) showToast({ message: msg, type: 'warning' });
+          }}
+        />
       );
     }
 
@@ -160,13 +156,13 @@ const SalesDataTable = ({
           <i className="bi bi-table"></i> INPUT Data
         </div>
         <div className="data-table-wrapper">
-          <table className="data-table" style={{ minWidth: `${Math.max(3000, inputColumns.reduce((sum, key) => sum + getColumnWidth(key), 2300))}px` }}>
+          <table className="data-table" style={{ minWidth: `${Math.max(2400, inputColumns.length * 160)}px` }}>
             <thead>
               <tr>
                 <th style={{ width: '50px' }}><i className="bi bi-filter"></i> Select</th>
-                <th style={{ width: '180px' }}>Customer Account</th>
+                <th style={{ width: '180px' }}>Claim ID</th>
                 {inputColumns.map((key) => (
-                  <th key={key} style={{ width: `${getColumnWidth(key)}px` }}>{key}</th>
+                  <th key={key} style={{ width: '160px' }}>{key}</th>
                 ))}
               </tr>
             </thead>
@@ -191,7 +187,7 @@ const SalesDataTable = ({
                           onChange={() => onSelectRow(row.__rowId)}
                         />
                       </td>
-                      <td><strong>{row.Customer_Account}</strong></td>
+                      <td><strong>{row.clmId}</strong></td>
                       {renderInputCells(row)}
                     </tr>
                   );
@@ -218,18 +214,17 @@ const SalesDataTable = ({
       <div className="data-table-wrapper">
         <table
           className={`data-table output-table ${showInputCols ? 'output-table--expanded' : ''}`}
-          style={showInputCols ? { minWidth: `${Math.max(3400, inputColumns.reduce((sum, key) => sum + getColumnWidth(key), 3200))}px` } : undefined}
+          style={showInputCols ? { minWidth: `${Math.max(2800, inputColumns.length * 170)}px` } : undefined}
         >
           <thead>
             <tr>
-              <th style={{ width: showInputCols ? '50px' : '8%' }}><i className="bi bi-filter"></i> Select</th>
-              <th style={{ width: showInputCols ? '180px' : '18%' }}>Customer Account</th>
-              <th style={{ width: showInputCols ? '40px' : '6%' }} title="Toggle input columns"></th>
-              <th style={{ width: showInputCols ? '170px' : '18%' }}>Probability %</th>
-              <th style={{ width: showInputCols ? '110px' : '12%' }}>Category</th>
-              <th style={{ width: showInputCols ? '260px' : '22%' }}>Recommended Products</th>
+              <th style={{ width: showInputCols ? '50px' : '10%' }}><i className="bi bi-filter"></i> Select</th>
+              <th style={{ width: showInputCols ? '180px' : '25%' }}>Claim ID</th>
+              <th style={{ width: showInputCols ? '40px' : '7%' }} title="Toggle input columns"></th>
+              <th style={{ width: showInputCols ? '220px' : '35%' }}>Late Interest Probability %</th>
+              <th style={{ width: showInputCols ? '120px' : '23%' }}>Category</th>
               {showInputCols && inputColumns.map((key) => (
-                <th key={`out-${key}`} style={{ width: `${getColumnWidth(key)}px` }}>{key}</th>
+                <th key={`out-${key}`} style={{ width: '160px' }}>{key}</th>
               ))}
             </tr>
           </thead>
@@ -247,11 +242,11 @@ const SalesDataTable = ({
                       onChange={() => onSelectRow(row.__rowId)}
                     />
                   </td>
-                  <td><strong>{row.Customer_Account}</strong></td>
+                  <td><strong>{row.clmId}</strong></td>
                   <td>
                     <div
                       className={`expand-toggle ${showInputCols ? 'expanded' : ''}`}
-                      onClick={() => setShowInputCols(prev => !prev)}
+                      onClick={() => setShowInputCols((prev) => !prev)}
                       title={showInputCols ? 'Hide input columns' : 'Show input columns'}
                     >
                       {showInputCols ? '−' : '+'}
@@ -269,32 +264,10 @@ const SalesDataTable = ({
                           {row.category}
                         </span>
                       </td>
-                      <td>
-                        {(() => {
-                          const raw = row.recommended_products;
-                          const options = Array.isArray(raw)
-                            ? raw
-                            : typeof raw === 'string'
-                              ? raw.split(',').map((item) => item.trim()).filter(Boolean)
-                              : [];
-
-                          if (!options.length) return '—';
-
-                          return (
-                            <select defaultValue={options[0]} style={{ width: '100%' }}>
-                              {options.map((product) => (
-                                <option key={`${row.__rowId}-${product}`} value={product}>
-                                  {product}
-                                </option>
-                              ))}
-                            </select>
-                          );
-                        })()}
-                      </td>
                     </>
                   ) : (
                     <>
-                      <td></td><td></td><td></td>
+                      <td></td><td></td>
                     </>
                   )}
                   {showInputCols && renderInputCells(row)}
@@ -308,4 +281,4 @@ const SalesDataTable = ({
   );
 };
 
-export default SalesDataTable;
+export default LpiDataTable;

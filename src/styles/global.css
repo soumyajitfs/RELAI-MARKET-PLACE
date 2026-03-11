@@ -40,7 +40,7 @@
   
   /* Gradients */
   --gradient-orange: linear-gradient(90deg, #FF4400 0%, #FF4400 100%);
-  --gradient-card-header: linear-gradient(90deg, #D2E7FC 0%, #FFFFFF 51%);
+  --gradient-card-header: linear-gradient(90deg, #D2E7FC 0%, #D2E7FC 100%);
   --gradient-sidebar: linear-gradient(180deg, #0D0F1E 0%, #1B1F4B 35%, #252A60 65%, #1B1F4B 100%);
   --gradient-dark-blue: linear-gradient(135deg, #13338E 0%, #13338E 100%);
   --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
@@ -330,7 +330,7 @@ html, body {
    ===================================================== */
 
 .welcome-header {
-  background: white;
+  background: linear-gradient(90deg, #D2E7FC 0%, #FFFFFF 51%);
   border-radius: var(--radius-lg);
   padding: 28px 32px;
   margin-bottom: 24px;
@@ -509,7 +509,7 @@ html, body {
 }
 
 .marketplace-card .card-header {
-  background: var(--gradient-card-header);
+  background: #D2E7FC;
   padding: 16px 20px;
   border: none;
   position: relative;
@@ -518,7 +518,7 @@ html, body {
 
 /* Subtle pattern overlay on card header */
 .marketplace-card .card-header::after {
-  content: '';
+  content: none;
   position: absolute;
   top: -50%;
   right: -30%;

@@ -1,6 +1,23 @@
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
 module.exports = function (app) {
+  // Late Payment Interest backend — must come BEFORE the general /api proxy
+  app.use(
+    '/api/lpi',
+    createProxyMiddleware({
+      target: 'https://ml-market-backend-ml-late-payment-interest.azurewebsites.net',
+      changeOrigin: true,
+      secure: false,
+      logLevel: 'debug',
+      onProxyRes: function (proxyRes, req, res) {
+        console.log('[Proxy-LPI] Response from:', req.url, 'Status:', proxyRes.statusCode);
+      },
+      onError: function (err, req, res) {
+        console.error('[Proxy-LPI] Error:', err.message);
+      },
+    })
+  );
+
   // Sales Optimization backend — must come BEFORE the general /api proxy
   app.use(
     '/api/sales',
