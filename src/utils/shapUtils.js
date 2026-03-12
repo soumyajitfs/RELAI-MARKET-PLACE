@@ -196,6 +196,8 @@ export const buildShapData = (account) => {
     logOdds: Math.round(logOdds * 1000) / 1000,
     probability,
     features,
+    legendHighText: 'Increases probability toward High Collectability',
+    legendLowText: 'Increases probability toward Low Collectability',
   };
 };
 

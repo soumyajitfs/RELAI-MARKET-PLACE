@@ -29,6 +29,7 @@ const UtilitySimulationPanel = () => {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [apiError, setApiError] = useState(null);
   const [selectedAcctId, setSelectedAcctId] = useState(null);
+  const [selectedAcctIds, setSelectedAcctIds] = useState([]);
   const [hasOutput, setHasOutput] = useState(false);
 
   // ── Edit state ──
@@ -60,6 +61,7 @@ const UtilitySimulationPanel = () => {
     setAccounts([]);
     setHasOutput(false);
     setSelectedAcctId(null);
+    setSelectedAcctIds([]);
     setEditEnabled(false);
     setDraftAccounts([]);
     setHasUnappliedChanges(false);
@@ -82,6 +84,7 @@ const UtilitySimulationPanel = () => {
 
   const handleReset = async () => {
     setSelectedAcctId(null);
+    setSelectedAcctIds([]);
     setHasOutput(false);
     setEditEnabled(false);
     setHasUnappliedChanges(false);
@@ -91,8 +94,8 @@ const UtilitySimulationPanel = () => {
   const handleRun = async () => {
     setIsLoading(true);
     try {
-      const accountsToRun = selectedAcctId != null
-        ? accounts.filter(acc => acc.acctId === selectedAcctId)
+      const accountsToRun = selectedAcctIds.length > 0
+        ? accounts.filter(acc => selectedAcctIds.includes(acc.acctId))
         : accounts;
 
       // Call real backend predict API — returns merged results with prediction output
@@ -105,6 +108,8 @@ const UtilitySimulationPanel = () => {
       );
       setAccounts(merged);
       setHasOutput(true);
+      setSelectedAcctId(selectedAcctIds.length > 0 ? selectedAcctIds[0] : null);
+      setSelectedAcctIds([]);
     } catch (err) {
       console.error('Prediction API failed:', err);
       actions.showToast({ message: err.message || 'Failed to run prediction model', type: 'warning' });
@@ -135,6 +140,12 @@ const UtilitySimulationPanel = () => {
   };
 
   const handleSelectAccount = (acctId) => {
+    if (!hasOutput) {
+      setSelectedAcctIds((prev) =>
+        prev.includes(acctId) ? prev.filter((id) => id !== acctId) : [...prev, acctId]
+      );
+      return;
+    }
     setSelectedAcctId(prev => (prev === acctId ? null : acctId));
   };
 
@@ -213,7 +224,10 @@ const UtilitySimulationPanel = () => {
         {hasOutput
           ? 'Outputs are highlighted. Select any row to see details.'
           : 'Select rows to run on specific accounts, or run on all accounts without selection.'}
-        {selectedAcctId != null && (
+        {!hasOutput && selectedAcctIds.length > 0 && (
+          <strong> ({selectedAcctIds.length} account(s) selected)</strong>
+        )}
+        {hasOutput && selectedAcctId != null && (
           <strong> (Account {selectedAcctId} selected)</strong>
         )}
       </p>
@@ -253,6 +267,7 @@ const UtilitySimulationPanel = () => {
             editEnabled={editEnabled}
             hasOutput={hasOutput}
             selectedAcctId={selectedAcctId}
+            selectedAcctIds={selectedAcctIds}
             onSelectAccount={handleSelectAccount}
             fieldRanges={FIELD_RANGES}
           />

@@ -531,7 +531,7 @@ html, body {
 .marketplace-card .card-header h5 {
   font-size: 15px;
   font-weight: 700;
-  color: #000000;
+  color: #13338E;
   margin: 0;
   text-align: center;
   letter-spacing: 0.2px;
@@ -1599,4 +1599,156 @@ html, body {
 
 .screen-background {
   background-color: #F7F7F7;
+}
+
+/* =====================================================
+   DASHBOARD DENSITY TUNING (100% zoom ≈ old 80% view)
+   ===================================================== */
+
+/* Keep responsive behavior intact while compacting desktop density */
+@media (min-width: 993px) {
+  html,
+  body {
+    font-size: 12px;
+  }
+
+  .top-dark-bar {
+    height: 42px;
+    padding-right: 18px;
+  }
+
+  .top-logo {
+    height: 24px;
+  }
+
+  .sidebar {
+    width: 236px;
+  }
+
+  .sidebar-toggle-fixed {
+    top: 42px;
+    left: 196px;
+    width: 24px;
+    height: 24px;
+    font-size: 10px;
+  }
+
+  .sidebar.collapsed {
+    transform: translateX(-236px);
+  }
+
+  .main-content {
+    margin-left: 236px;
+    padding: 18px 22px;
+  }
+
+  .main-content.sidebar-collapsed {
+    margin-left: 44px;
+  }
+
+  .sidebar-header {
+    padding: 24px 16px 18px;
+  }
+
+  .sidebar-logo {
+    max-width: 110px;
+    margin-bottom: 12px;
+  }
+
+  .sidebar-title {
+    font-size: 17px;
+    margin-bottom: 4px;
+  }
+
+  .sidebar-subtitle {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+  }
+
+  .sidebar-section {
+    padding: 16px 14px;
+  }
+
+  .sidebar-btn {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .welcome-header {
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+
+  .welcome-header h1 {
+    font-size: 22px;
+    margin-bottom: 6px;
+  }
+
+  .welcome-subtitle {
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+
+  .welcome-tagline span {
+    font-size: 13px;
+  }
+
+  .filter-bar {
+    padding: 14px 18px;
+    margin-bottom: 16px;
+  }
+
+  .filter-bar h5 {
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+
+  .filter-buttons {
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .filter-btn {
+    padding: 6px 16px;
+    font-size: 12px;
+  }
+
+  .filter-count {
+    font-size: 11px;
+  }
+
+  .card-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .marketplace-card .card-header {
+    padding: 10px 14px;
+  }
+
+  .marketplace-card .card-header h5 {
+    font-size: 14px;
+  }
+
+  .marketplace-card .card-body {
+    padding: 14px;
+    min-height: 122px;
+  }
+
+  .description-box {
+    padding: 10px 12px;
+    font-size: 12px;
+    margin-bottom: 12px;
+    line-height: 1.45;
+  }
+
+  .model-badge {
+    padding: 4px 10px;
+    font-size: 10px;
+  }
+
+  .view-btn {
+    padding: 7px 18px;
+    font-size: 12px;
+  }
 }

@@ -13,6 +13,9 @@ const CAT_THEME = {
 const ShapAnalysis = ({ shapData }) => {
   const features = shapData?.features || [];
   const predictedCategory = shapData?.predictedCategory || '';
+  const categoryContextLabel = shapData?.categoryContextLabel || 'Propensity to Pay (P2P)';
+  const legendHighText = shapData?.legendHighText || 'Increases probability toward High P2P';
+  const legendLowText = shapData?.legendLowText || 'Decreases probability toward Low P2P';
 
   // For High/Low: show top 6 same-direction factors (3 left, 3 right)
   // For Medium: keep existing toward/against behavior
@@ -55,11 +58,8 @@ const ShapAnalysis = ({ shapData }) => {
   const pct = (probability * 100).toFixed(2);
 
   const theme = CAT_THEME[predictedCategory] || CAT_THEME.Low;
-  const catBadgeLabel =
-    predictedCategory === 'Super High' ? 'Super High — Propensity to Pay (P2P)'
-      : predictedCategory === 'High' ? 'High — Propensity to Pay (P2P)'
-        : predictedCategory === 'Medium' ? 'Medium — Propensity to Pay (P2P)'
-          : 'Low — Propensity to Pay (P2P)';
+  const resolvedCategory = predictedCategory || 'Low';
+  const catBadgeLabel = `${resolvedCategory} — ${categoryContextLabel}`;
 
   const isHighType = predictedCategory === 'High' || predictedCategory === 'Super High';
   const isLow = predictedCategory === 'Low';
@@ -98,12 +98,12 @@ const ShapAnalysis = ({ shapData }) => {
               <div className="shap-legend text-center mt-2">
                 <span className="legend-green">
                   <i className="bi bi-circle-fill" style={{ fontSize: '6px', marginRight: '4px', verticalAlign: 'middle' }}></i>
-                  Increases probability toward High P2P
+                  {legendHighText}
                 </span>
                 <span className="mx-2" style={{ color: '#cbd5e1' }}>|</span>
                 <span className="legend-red">
                   <i className="bi bi-circle-fill" style={{ fontSize: '6px', marginRight: '4px', verticalAlign: 'middle' }}></i>
-                  Decreases probability toward Low P2P
+                  {legendLowText}
                 </span>
               </div>
             </div>

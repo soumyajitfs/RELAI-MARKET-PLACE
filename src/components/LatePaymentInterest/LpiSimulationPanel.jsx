@@ -147,6 +147,7 @@ const LpiSimulationPanel = () => {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [apiError, setApiError] = useState(null);
   const [selectedRowId, setSelectedRowId] = useState(null);
+  const [selectedRowIds, setSelectedRowIds] = useState([]);
   const [hasOutput, setHasOutput] = useState(false);
 
   const [editEnabled, setEditEnabled] = useState(false);
@@ -172,6 +173,7 @@ const LpiSimulationPanel = () => {
     setRows([]);
     setHasOutput(false);
     setSelectedRowId(null);
+    setSelectedRowIds([]);
     setEditEnabled(false);
     setDraftRows([]);
     setHasUnappliedChanges(false);
@@ -190,6 +192,7 @@ const LpiSimulationPanel = () => {
 
   const handleReset = async () => {
     setSelectedRowId(null);
+    setSelectedRowIds([]);
     setHasOutput(false);
     setEditEnabled(false);
     setHasUnappliedChanges(false);
@@ -199,17 +202,20 @@ const LpiSimulationPanel = () => {
   const handleRun = async () => {
     setIsLoading(true);
     try {
-      const rowsToRun = selectedRowId != null
-        ? rows.filter((r) => r.__rowId === selectedRowId)
+      const rowsToRun = selectedRowIds.length > 0
+        ? rows.filter((r) => selectedRowIds.includes(r.__rowId))
         : rows;
 
       const results = await predictLpiAccounts(rowsToRun);
-      const merged = selectedRowId != null
-        ? rows.map((r) => (r.__rowId === selectedRowId ? (results[0] || r) : r))
+      const resultMap = new Map(results.map((r) => [r.__rowId, r]));
+      const merged = selectedRowIds.length > 0
+        ? rows.map((r) => (resultMap.has(r.__rowId) ? resultMap.get(r.__rowId) : r))
         : results;
 
       setRows(merged);
       setHasOutput(true);
+      setSelectedRowId(selectedRowIds.length > 0 ? selectedRowIds[0] : null);
+      setSelectedRowIds([]);
     } catch (err) {
       console.error('LPI prediction failed:', err);
       actions.showToast({ message: err.message || 'Failed to run prediction model', type: 'warning' });
@@ -239,7 +245,15 @@ const LpiSimulationPanel = () => {
     actions.showToast({ message: 'Changes have been applied successfully!', type: 'success' });
   };
 
-  const handleSelectRow = (rowId) => setSelectedRowId((prev) => (prev === rowId ? null : rowId));
+  const handleSelectRow = (rowId) => {
+    if (!hasOutput) {
+      setSelectedRowIds((prev) =>
+        prev.includes(rowId) ? prev.filter((id) => id !== rowId) : [...prev, rowId]
+      );
+      return;
+    }
+    setSelectedRowId((prev) => (prev === rowId ? null : rowId));
+  };
 
   const selectedRow = selectedRowId != null
     ? rows.find((r) => r.__rowId === selectedRowId)
@@ -298,7 +312,8 @@ const LpiSimulationPanel = () => {
         {hasOutput
           ? 'Outputs are highlighted. Select any row to see details.'
           : 'Select rows to run on specific claims, or run on all claims without selection.'}
-        {selectedRow && <strong> (Claim {selectedRow.clmId} selected)</strong>}
+        {!hasOutput && selectedRowIds.length > 0 && <strong> ({selectedRowIds.length} claim(s) selected)</strong>}
+        {hasOutput && selectedRow && <strong> (Claim {selectedRow.clmId} selected)</strong>}
       </p>
 
       {isInitialLoading ? (
@@ -331,6 +346,7 @@ const LpiSimulationPanel = () => {
             editEnabled={editEnabled}
             hasOutput={hasOutput}
             selectedRowId={selectedRowId}
+            selectedRowIds={selectedRowIds}
             onSelectRow={handleSelectRow}
             fieldRules={LPI_RULES_BY_KEY}
             validateField={validateLpiField}

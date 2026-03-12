@@ -56,6 +56,9 @@ export const buildLpiShapData = (row) => {
     features,
     predictedCategory: row.category || 'Low',
     probability: row.probabilityPercent != null ? row.probabilityPercent / 100 : (row.probability ?? 0),
+    categoryContextLabel: 'Late Payment Risk',
+    legendHighText: 'Increases probability toward High Late Payment Risk',
+    legendLowText: 'Increases probability toward Low Late Payment Risk',
   };
 };
 

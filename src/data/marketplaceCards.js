@@ -18,20 +18,12 @@ const marketplaceCards = [
   },
   {
     id: 'collectability-model',
-    title: 'Collectability Model',
+    title: 'Payer Collectability',
     description: 'Classifies healthcare claims by collectibility to prioritize high-value claims and improve collections efficiency.',
     vertical: 'Provider',
     modelType: 'Classification',
     enabled: true,
     route: '/collectability-model'
-  },
-  {
-    id: 'payer-collectability',
-    title: 'Payer collectability',
-    description: 'Segments accounts based on financial risk and expected recovery probability.',
-    vertical: 'Provider',
-    modelType: 'Classification',
-    enabled: false
   },
   {
     id: 'right-party-contact',

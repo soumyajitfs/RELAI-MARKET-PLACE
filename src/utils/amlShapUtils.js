@@ -77,6 +77,9 @@ export const buildAmlShapData = (account) => {
     features,
     predictedCategory,
     probability,
+    categoryContextLabel: 'AML Alert Risk',
+    legendHighText: 'Increases probability toward High AML Alert Risk',
+    legendLowText: 'Increases probability toward Low AML Alert Risk',
   };
 };
 

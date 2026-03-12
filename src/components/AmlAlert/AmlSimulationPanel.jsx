@@ -45,6 +45,7 @@ const AmlSimulationPanel = () => {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [apiError, setApiError] = useState(null);
   const [selectedRowId, setSelectedRowId] = useState(null);
+  const [selectedRowIds, setSelectedRowIds] = useState([]);
   const [hasOutput, setHasOutput] = useState(false);
 
   const [editEnabled, setEditEnabled] = useState(false);
@@ -70,6 +71,7 @@ const AmlSimulationPanel = () => {
     setAccounts([]);
     setHasOutput(false);
     setSelectedRowId(null);
+    setSelectedRowIds([]);
     setEditEnabled(false);
     setDraftAccounts([]);
     setHasUnappliedChanges(false);
@@ -90,6 +92,7 @@ const AmlSimulationPanel = () => {
 
   const handleReset = async () => {
     setSelectedRowId(null);
+    setSelectedRowIds([]);
     setHasOutput(false);
     setEditEnabled(false);
     setHasUnappliedChanges(false);
@@ -99,17 +102,20 @@ const AmlSimulationPanel = () => {
   const handleRun = async () => {
     setIsLoading(true);
     try {
-      const accountsToRun = selectedRowId != null
-        ? accounts.filter(acc => acc.__rowId === selectedRowId)
+      const accountsToRun = selectedRowIds.length > 0
+        ? accounts.filter(acc => selectedRowIds.includes(acc.__rowId))
         : accounts;
 
       const results = await predictAmlAccounts(accountsToRun);
-      const merged = selectedRowId != null
-        ? accounts.map(acc => (acc.__rowId === selectedRowId ? (results[0] || acc) : acc))
+      const resultMap = new Map(results.map((r) => [r.__rowId, r]));
+      const merged = selectedRowIds.length > 0
+        ? accounts.map((acc) => (resultMap.has(acc.__rowId) ? resultMap.get(acc.__rowId) : acc))
         : results;
 
       setAccounts(merged);
       setHasOutput(true);
+      setSelectedRowId(selectedRowIds.length > 0 ? selectedRowIds[0] : null);
+      setSelectedRowIds([]);
     } catch (err) {
       console.error('AML prediction API failed:', err);
       actions.showToast({ message: err.message || 'Failed to run prediction model', type: 'warning' });
@@ -143,6 +149,12 @@ const AmlSimulationPanel = () => {
   };
 
   const handleSelectAccount = (rowId) => {
+    if (!hasOutput) {
+      setSelectedRowIds((prev) =>
+        prev.includes(rowId) ? prev.filter((id) => id !== rowId) : [...prev, rowId]
+      );
+      return;
+    }
     setSelectedRowId(prev => (prev === rowId ? null : rowId));
   };
 
@@ -219,7 +231,8 @@ const AmlSimulationPanel = () => {
         {hasOutput
           ? 'Outputs are highlighted. Select any row to see details.'
           : 'Select rows to run on specific accounts, or run on all accounts without selection.'}
-        {selectedAccount && <strong> (Account {selectedAccount.accountId} selected)</strong>}
+        {!hasOutput && selectedRowIds.length > 0 && <strong> ({selectedRowIds.length} account(s) selected)</strong>}
+        {hasOutput && selectedAccount && <strong> (Account {selectedAccount.accountId} selected)</strong>}
       </p>
 
       {isInitialLoading ? (
@@ -252,6 +265,7 @@ const AmlSimulationPanel = () => {
             editEnabled={editEnabled}
             hasOutput={hasOutput}
             selectedRowId={selectedRowId}
+            selectedRowIds={selectedRowIds}
             onSelectAccount={handleSelectAccount}
             fieldRanges={FIELD_RANGES}
           />

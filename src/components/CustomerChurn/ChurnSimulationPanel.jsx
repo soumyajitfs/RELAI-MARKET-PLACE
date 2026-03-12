@@ -29,6 +29,7 @@ const ChurnSimulationPanel = () => {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [apiError, setApiError] = useState(null);
   const [selectedRowId, setSelectedRowId] = useState(null);
+  const [selectedRowIds, setSelectedRowIds] = useState([]);
   const [hasOutput, setHasOutput] = useState(false);
 
   const [editEnabled, setEditEnabled] = useState(false);
@@ -54,6 +55,7 @@ const ChurnSimulationPanel = () => {
     setCustomers([]);
     setHasOutput(false);
     setSelectedRowId(null);
+    setSelectedRowIds([]);
     setEditEnabled(false);
     setDraftCustomers([]);
     setHasUnappliedChanges(false);
@@ -74,6 +76,7 @@ const ChurnSimulationPanel = () => {
 
   const handleReset = async () => {
     setSelectedRowId(null);
+    setSelectedRowIds([]);
     setHasOutput(false);
     setEditEnabled(false);
     setHasUnappliedChanges(false);
@@ -83,17 +86,20 @@ const ChurnSimulationPanel = () => {
   const handleRun = async () => {
     setIsLoading(true);
     try {
-      const rowsToRun = selectedRowId != null
-        ? customers.filter(c => c.__rowId === selectedRowId)
+      const rowsToRun = selectedRowIds.length > 0
+        ? customers.filter(c => selectedRowIds.includes(c.__rowId))
         : customers;
 
       const results = await predictChurnCustomers(rowsToRun);
-      const merged = selectedRowId != null
-        ? customers.map(c => (c.__rowId === selectedRowId ? (results[0] || c) : c))
+      const resultMap = new Map(results.map((r) => [r.__rowId, r]));
+      const merged = selectedRowIds.length > 0
+        ? customers.map((c) => (resultMap.has(c.__rowId) ? resultMap.get(c.__rowId) : c))
         : results;
 
       setCustomers(merged);
       setHasOutput(true);
+      setSelectedRowId(selectedRowIds.length > 0 ? selectedRowIds[0] : null);
+      setSelectedRowIds([]);
     } catch (err) {
       console.error('Churn prediction API failed:', err);
       actions.showToast({ message: err.message || 'Failed to run prediction model', type: 'warning' });
@@ -127,6 +133,12 @@ const ChurnSimulationPanel = () => {
   };
 
   const handleSelectCustomer = (rowId) => {
+    if (!hasOutput) {
+      setSelectedRowIds((prev) =>
+        prev.includes(rowId) ? prev.filter((id) => id !== rowId) : [...prev, rowId]
+      );
+      return;
+    }
     setSelectedRowId(prev => (prev === rowId ? null : rowId));
   };
 
@@ -203,7 +215,8 @@ const ChurnSimulationPanel = () => {
         {hasOutput
           ? 'Outputs are highlighted. Select any row to see details.'
           : 'Select rows to run on specific customers, or run on all customers without selection.'}
-        {selectedCustomer && <strong> (User {selectedCustomer.user_id} selected)</strong>}
+        {!hasOutput && selectedRowIds.length > 0 && <strong> ({selectedRowIds.length} customer(s) selected)</strong>}
+        {hasOutput && selectedCustomer && <strong> (User {selectedCustomer.user_id} selected)</strong>}
       </p>
 
       {isInitialLoading ? (
@@ -236,6 +249,7 @@ const ChurnSimulationPanel = () => {
             editEnabled={editEnabled}
             hasOutput={hasOutput}
             selectedRowId={selectedRowId}
+            selectedRowIds={selectedRowIds}
             onSelectCustomer={handleSelectCustomer}
             fieldRanges={FIELD_RANGES}
           />

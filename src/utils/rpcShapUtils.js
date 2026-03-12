@@ -149,5 +149,8 @@ export const buildRpcShapData = (account) => {
     features,
     predictedCategory,
     probability,
+    categoryContextLabel: 'Right Party Contact (RPC)',
+    legendHighText: 'Increases probability toward High RPC',
+    legendLowText: 'Increases probability toward Low RPC',
   };
 };

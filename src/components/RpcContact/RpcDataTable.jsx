@@ -67,6 +67,7 @@ const RpcDataTable = ({
   editEnabled,
   hasOutput,
   selectedAcctId,
+  selectedAcctIds = [],
   onSelectAccount,
   fieldRanges,
 }) => {
@@ -243,19 +244,17 @@ const RpcDataTable = ({
                 </tr>
               ) : (
                 displayAccounts.map((account) => {
-                  const isSelected = selectedAcctId === account.AcctID;
-                  const isFrozen = selectedAcctId != null && !isSelected;
+                  const isSelected = selectedAcctIds.includes(account.AcctID);
 
                   return (
                     <tr
                       key={account.AcctID}
-                      className={`${isSelected ? 'selected' : ''} ${isFrozen ? 'frozen' : ''}`}
+                      className={`${isSelected ? 'selected' : ''}`}
                     >
                       <td>
                         <input
                           type="checkbox"
                           checked={isSelected}
-                          disabled={isFrozen}
                           onChange={() => onSelectAccount(account.AcctID)}
                         />
                       </td>

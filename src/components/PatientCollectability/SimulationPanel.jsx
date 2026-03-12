@@ -70,6 +70,10 @@ const SimulationPanel = () => {
       );
       actions.setAccounts(merged);
       actions.setHasOutput(true);
+      // OUTPUT view supports single-row drill-down (SHAP), so keep one selected row.
+      if (selectedFacs.length > 1) {
+        actions.setSelectedFacs([selectedFacs[0]]);
+      }
     } catch (err) {
       console.error('Prediction API failed:', err);
       actions.setApiError(err.message || 'Failed to run prediction model');

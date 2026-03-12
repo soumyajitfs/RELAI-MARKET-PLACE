@@ -48,6 +48,7 @@ const UtilityDataTable = ({
   editEnabled,
   hasOutput,
   selectedAcctId,
+  selectedAcctIds = [],
   onSelectAccount,
   fieldRanges,
 }) => {
@@ -212,19 +213,17 @@ const UtilityDataTable = ({
                 </tr>
               ) : (
                 displayAccounts.map((account) => {
-                  const isSelected = selectedAcctId === account.acctId;
-                  const isFrozen = selectedAcctId != null && !isSelected;
+                  const isSelected = selectedAcctIds.includes(account.acctId);
 
                   return (
                     <tr
                       key={account.acctId}
-                      className={`${isSelected ? 'selected' : ''} ${isFrozen ? 'frozen' : ''}`}
+                      className={`${isSelected ? 'selected' : ''}`}
                     >
                       <td>
                         <input
                           type="checkbox"
                           checked={isSelected}
-                          disabled={isFrozen}
                           onChange={() => onSelectAccount(account.acctId)}
                         />
                       </td>

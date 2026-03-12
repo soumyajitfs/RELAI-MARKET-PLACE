@@ -58,6 +58,9 @@ export const buildChurnShapData = (customer) => {
     features,
     predictedCategory,
     probability,
+    categoryContextLabel: 'Churn Risk',
+    legendHighText: 'Increases probability toward High Churn Risk',
+    legendLowText: 'Increases probability toward Low Churn Risk',
   };
 };
 

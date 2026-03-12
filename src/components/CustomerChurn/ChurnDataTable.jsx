@@ -49,6 +49,7 @@ const ChurnDataTable = ({
   editEnabled,
   hasOutput,
   selectedRowId,
+  selectedRowIds = [],
   onSelectCustomer,
   fieldRanges,
 }) => {
@@ -153,15 +154,13 @@ const ChurnDataTable = ({
                 </tr>
               ) : (
                 displayRows.map((row) => {
-                  const isSelected = selectedRowId === row.__rowId;
-                  const isFrozen = selectedRowId != null && !isSelected;
+                  const isSelected = selectedRowIds.includes(row.__rowId);
                   return (
-                    <tr key={row.__rowId} className={`${isSelected ? 'selected' : ''} ${isFrozen ? 'frozen' : ''}`}>
+                    <tr key={row.__rowId} className={`${isSelected ? 'selected' : ''}`}>
                       <td>
                         <input
                           type="checkbox"
                           checked={isSelected}
-                          disabled={isFrozen}
                           onChange={() => onSelectCustomer(row.__rowId)}
                         />
                       </td>

@@ -25,6 +25,16 @@ const DataTable = ({ draftAccounts, setDraftAccounts, setHasUnappliedChanges }) 
     : baseAccounts;
 
   const handleCheckboxChange = (facsNumber) => {
+    if (!hasOutput) {
+      // INPUT table: allow true multi-select.
+      const nextSelection = selectedFacs.includes(facsNumber)
+        ? selectedFacs.filter(id => id !== facsNumber)
+        : [...selectedFacs, facsNumber];
+      actions.setSelectedFacs(nextSelection);
+      return;
+    }
+
+    // OUTPUT table: keep existing single-select behavior.
     actions.toggleFacsSelection(facsNumber);
   };
 
@@ -221,14 +231,13 @@ const DataTable = ({ draftAccounts, setDraftAccounts, setHasUnappliedChanges }) 
           {displayAccounts.map((account) => (
             <tr 
               key={account.facsNumber}
-                  className={`${selectedFacs.includes(account.facsNumber) ? 'selected' : ''} ${selectedFacs.length > 0 && !selectedFacs.includes(account.facsNumber) ? 'frozen' : ''}`}
+                  className={`${selectedFacs.includes(account.facsNumber) ? 'selected' : ''}`}
             >
               <td>
                 <input
                   type="checkbox"
                   checked={selectedFacs.includes(account.facsNumber)}
                   onChange={() => handleCheckboxChange(account.facsNumber)}
-                      disabled={selectedFacs.length > 0 && !selectedFacs.includes(account.facsNumber)}
                 />
               </td>
                   <td><strong>{account.facsNumber}</strong></td>

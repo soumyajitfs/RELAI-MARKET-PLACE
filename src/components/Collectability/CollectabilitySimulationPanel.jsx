@@ -113,6 +113,7 @@ const CollectabilitySimulationPanel = () => {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [apiError, setApiError] = useState(null);
   const [selectedRowId, setSelectedRowId] = useState(null);
+  const [selectedRowIds, setSelectedRowIds] = useState([]);
   const [hasOutput, setHasOutput] = useState(false);
 
   const [editEnabled, setEditEnabled] = useState(false);
@@ -138,6 +139,7 @@ const CollectabilitySimulationPanel = () => {
     setRows([]);
     setHasOutput(false);
     setSelectedRowId(null);
+    setSelectedRowIds([]);
     setEditEnabled(false);
     setDraftRows([]);
     setHasUnappliedChanges(false);
@@ -156,6 +158,7 @@ const CollectabilitySimulationPanel = () => {
 
   const handleReset = async () => {
     setSelectedRowId(null);
+    setSelectedRowIds([]);
     setHasOutput(false);
     setEditEnabled(false);
     setHasUnappliedChanges(false);
@@ -165,17 +168,20 @@ const CollectabilitySimulationPanel = () => {
   const handleRun = async () => {
     setIsLoading(true);
     try {
-      const rowsToRun = selectedRowId != null
-        ? rows.filter(r => r.__rowId === selectedRowId)
+      const rowsToRun = selectedRowIds.length > 0
+        ? rows.filter(r => selectedRowIds.includes(r.__rowId))
         : rows;
 
       const results = await predictCollectabilityAccounts(rowsToRun);
-      const merged = selectedRowId != null
-        ? rows.map(r => (r.__rowId === selectedRowId ? (results[0] || r) : r))
+      const resultMap = new Map(results.map((r) => [r.__rowId, r]));
+      const merged = selectedRowIds.length > 0
+        ? rows.map((r) => (resultMap.has(r.__rowId) ? resultMap.get(r.__rowId) : r))
         : results;
 
       setRows(merged);
       setHasOutput(true);
+      setSelectedRowId(selectedRowIds.length > 0 ? selectedRowIds[0] : null);
+      setSelectedRowIds([]);
     } catch (err) {
       console.error('Collectability prediction failed:', err);
       actions.showToast({ message: err.message || 'Failed to run prediction model', type: 'warning' });
@@ -204,7 +210,15 @@ const CollectabilitySimulationPanel = () => {
     actions.showToast({ message: 'Changes have been applied successfully!', type: 'success' });
   };
 
-  const handleSelectRow = (rowId) => setSelectedRowId(prev => (prev === rowId ? null : rowId));
+  const handleSelectRow = (rowId) => {
+    if (!hasOutput) {
+      setSelectedRowIds((prev) =>
+        prev.includes(rowId) ? prev.filter((id) => id !== rowId) : [...prev, rowId]
+      );
+      return;
+    }
+    setSelectedRowId(prev => (prev === rowId ? null : rowId));
+  };
 
   const selectedRow = selectedRowId != null
     ? rows.find(r => r.__rowId === selectedRowId)
@@ -263,7 +277,8 @@ const CollectabilitySimulationPanel = () => {
         {hasOutput
           ? 'Outputs are highlighted. Select any row to see details.'
           : 'Select rows to run on specific accounts, or run on all accounts without selection.'}
-        {selectedRow && <strong> (Account {selectedRow['CLIENT REFERENCE NUMBER']} selected)</strong>}
+        {!hasOutput && selectedRowIds.length > 0 && <strong> ({selectedRowIds.length} account(s) selected)</strong>}
+        {hasOutput && selectedRow && <strong> (Account {selectedRow['CLIENT REFERENCE NUMBER']} selected)</strong>}
       </p>
 
       {isInitialLoading ? (
@@ -296,6 +311,7 @@ const CollectabilitySimulationPanel = () => {
             editEnabled={editEnabled}
             hasOutput={hasOutput}
             selectedRowId={selectedRowId}
+            selectedRowIds={selectedRowIds}
             onSelectRow={handleSelectRow}
             fieldRules={COLLECTABILITY_FIELD_RULES}
             validateField={validateCollectabilityValue}

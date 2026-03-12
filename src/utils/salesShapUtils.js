@@ -54,6 +54,9 @@ export const buildSalesShapData = (row) => {
     features,
     predictedCategory,
     probability,
+    categoryContextLabel: 'Conversion Likelihood',
+    legendHighText: 'Increases probability toward High Conversion Likelihood',
+    legendLowText: 'Increases probability toward Low Conversion Likelihood',
   };
 };
 

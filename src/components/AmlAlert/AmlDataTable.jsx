@@ -55,6 +55,7 @@ const AmlDataTable = ({
   editEnabled,
   hasOutput,
   selectedRowId,
+  selectedRowIds = [],
   onSelectAccount,
   fieldRanges,
 }) => {
@@ -144,19 +145,17 @@ const AmlDataTable = ({
                 </tr>
               ) : (
                 displayAccounts.map((account) => {
-                  const isSelected = selectedRowId === account.__rowId;
-                  const isFrozen = selectedRowId != null && !isSelected;
+                  const isSelected = selectedRowIds.includes(account.__rowId);
 
                   return (
                     <tr
                       key={account.__rowId}
-                      className={`${isSelected ? 'selected' : ''} ${isFrozen ? 'frozen' : ''}`}
+                      className={`${isSelected ? 'selected' : ''}`}
                     >
                       <td>
                         <input
                           type="checkbox"
                           checked={isSelected}
-                          disabled={isFrozen}
                           onChange={() => onSelectAccount(account.__rowId)}
                         />
                       </td>

@@ -54,6 +54,7 @@ export const buildCollectabilityShapData = (row) => {
     features,
     predictedCategory,
     probability,
+    categoryContextLabel: 'Collectability',
   };
 };
 
