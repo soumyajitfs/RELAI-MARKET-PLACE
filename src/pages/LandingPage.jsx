@@ -24,8 +24,8 @@ const LandingPage = () => {
 
   return (
     <div className="landing-page">
-      {/* Welcome Header - only shown on Home vertical */}
-      {selectedVertical === 'Home' && <WelcomeHeader />}
+      {/* Welcome Header - shown on all verticals for consistent top layout */}
+      <WelcomeHeader />
       
       {/* Filter Bar */}
       <FilterBar 

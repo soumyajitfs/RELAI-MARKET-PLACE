@@ -462,16 +462,17 @@ html, body {
 }
 
 .filter-btn.active {
-  background: var(--gradient-dark-blue);
+  background: linear-gradient(135deg, var(--primary-orange) 0%, var(--primary-orange-light) 100%);
   color: white;
-  border-color: var(--primary-dark);
+  border-color: rgba(255,255,255,0.15);
   font-weight: 600;
-  box-shadow: 0 3px 12px rgba(27, 31, 75, 0.2);
+  box-shadow: 0 4px 16px rgba(223, 96, 20, 0.35);
 }
 
 .filter-count {
   font-size: 13px;
-  color: var(--text-muted);
+  color: var(--text-secondary);
+  font-weight: 700;
 }
 
 
