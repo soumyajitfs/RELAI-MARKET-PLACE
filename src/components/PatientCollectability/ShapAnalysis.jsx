@@ -63,6 +63,15 @@ const ShapAnalysis = ({ shapData }) => {
 
   const isHighType = predictedCategory === 'High' || predictedCategory === 'Super High';
   const isLow = predictedCategory === 'Low';
+  const probabilityLabelMap = {
+    Collectability: 'Collectability Probability',
+    'Right Party Contact (RPC)': 'RPC Probability',
+    'Conversion Likelihood': 'Conversion Probability',
+    'AML Alert Risk': 'Risk Probability',
+    'Churn Risk': 'Churn Probability',
+    'Late Payment Risk': 'Late Interest Probability',
+  };
+  const probabilityLabel = probabilityLabelMap[categoryContextLabel] || 'P2P Probability';
 
   const singleLabel =
     predictedCategory === 'Super High' ? 'TOP SUPER HIGH FACTORS P2P'
@@ -196,7 +205,7 @@ const ShapAnalysis = ({ shapData }) => {
 
               {/* Predicted Probability */}
               <div className="shap-prob-box-bottom">
-                <span className="prob-label-bottom">Predicted Probability</span>
+                <span className="prob-label-bottom">{probabilityLabel}</span>
                 <span className="prob-value-bottom" style={{ color: theme.color }}>{pct}%</span>
               </div>
 

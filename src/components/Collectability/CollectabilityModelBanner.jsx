@@ -23,7 +23,7 @@ const CollectabilityModelBanner = () => {
                 <span className="stat-icon blue"></span>
                 Algorithm
               </div>
-              <div className="stat-value">Gradient Boosting</div>
+              <div className="stat-value">XGBoost</div>
             </div>
 
             <div className="stat-card">
@@ -32,7 +32,7 @@ const CollectabilityModelBanner = () => {
                 Training Data
               </div>
               <div className="stat-value">
-                <span className="big">12K</span>
+                <span className="big">113K</span>
                 <span className="small">claims</span>
               </div>
             </div>

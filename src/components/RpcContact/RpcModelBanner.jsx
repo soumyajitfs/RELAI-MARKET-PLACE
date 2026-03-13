@@ -37,7 +37,7 @@ const RpcModelBanner = () => {
                 Training Data
               </div>
               <div className="stat-value">
-                <span className="big">1.8L</span>
+                <span className="big">110K</span>
                 <span className="small">records</span>
               </div>
             </div>

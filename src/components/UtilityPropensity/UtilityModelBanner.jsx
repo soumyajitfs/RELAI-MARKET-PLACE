@@ -37,7 +37,7 @@ const UtilityModelBanner = () => {
                 Training Data
               </div>
               <div className="stat-value">
-                <span className="big">30K</span>
+                <span className="big">10K</span>
                 <span className="small">records</span>
               </div>
             </div>

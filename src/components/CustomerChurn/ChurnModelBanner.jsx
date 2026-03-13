@@ -23,7 +23,7 @@ const ChurnModelBanner = () => {
                 <span className="stat-icon blue"></span>
                 Algorithm
               </div>
-              <div className="stat-value">Gradient Boosting</div>
+              <div className="stat-value">XGBoost</div>
             </div>
 
             <div className="stat-card">
@@ -32,7 +32,7 @@ const ChurnModelBanner = () => {
                 Training Data
               </div>
               <div className="stat-value">
-                <span className="big">50K</span>
+                <span className="big">5K</span>
                 <span className="small">customers</span>
               </div>
             </div>
