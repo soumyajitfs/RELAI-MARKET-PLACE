@@ -12,6 +12,7 @@ import CollectabilityPage from './pages/CollectabilityPage';
 import SalesOptimizationPage from './pages/SalesOptimizationPage';
 import LatePaymentInterestPage from './pages/LatePaymentInterestPage';
 import UnderDevelopmentPage from './pages/UnderDevelopmentPage';
+import ClaimsDenialPage from './pages/ClaimsDenialPage';
 
 // Import styles
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -31,6 +32,7 @@ function App() {
             <Route path="/aml-alert" element={<AmlAlertPage />} />
             <Route path="/customer-churn" element={<CustomerChurnPage />} />
             <Route path="/collectability-model" element={<CollectabilityPage />} />
+            <Route path="/claims-denial" element={<ClaimsDenialPage />} />
             <Route path="/sales-optimization" element={<SalesOptimizationPage />} />
             <Route path="/late-payment-interest" element={<LatePaymentInterestPage />} />
             <Route path="/under-development/:cardTitle?" element={<UnderDevelopmentPage />} />

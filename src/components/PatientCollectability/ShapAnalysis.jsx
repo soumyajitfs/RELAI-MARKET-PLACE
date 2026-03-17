@@ -70,6 +70,7 @@ const ShapAnalysis = ({ shapData }) => {
     'AML Alert Risk': 'Risk Probability',
     'Churn Risk': 'Churn Probability',
     'Late Payment Risk': 'Late Interest Probability',
+    'Claim Denial': 'Claim Denial Probability',
   };
   const probabilityLabel = probabilityLabelMap[categoryContextLabel] || 'P2P Probability';
 

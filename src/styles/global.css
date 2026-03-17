@@ -1135,6 +1135,20 @@ html, body {
   margin: 0;
 }
 
+/* Claims Denial edit mode: keep values readable */
+.claims-denial-edit-table td {
+  overflow: visible;
+  text-overflow: clip;
+}
+
+.claims-denial-edit-table input[type="text"],
+.claims-denial-edit-table input[type="number"],
+.claims-denial-edit-table input[type="date"],
+.claims-denial-edit-table select {
+  min-width: 130px;
+  font-size: 14px;
+}
+
 .data-table input:focus,
 .data-table select:focus {
   outline: none;

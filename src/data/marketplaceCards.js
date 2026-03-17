@@ -14,7 +14,8 @@ const marketplaceCards = [
     description: 'Predict claims that are likely to be denied by Healthcare payers.',
     vertical: 'Provider',
     modelType: 'Classification',
-    enabled: false
+    enabled: true,
+    route: '/claims-denial'
   },
   {
     id: 'collectability-model',

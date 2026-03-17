@@ -52,6 +52,23 @@ module.exports = function (app) {
     })
   );
 
+  // Claims Denial backend — must come BEFORE the general /api proxy
+  app.use(
+    '/api/claim-denial',
+    createProxyMiddleware({
+      target: 'https://ml-market-backend-propensity-to-deny.azurewebsites.net',
+      changeOrigin: true,
+      secure: false,
+      logLevel: 'debug',
+      onProxyRes: function (proxyRes, req, res) {
+        console.log('[Proxy-Claim-Denial] Response from:', req.url, 'Status:', proxyRes.statusCode);
+      },
+      onError: function (err, req, res) {
+        console.error('[Proxy-Claim-Denial] Error:', err.message);
+      },
+    })
+  );
+
   // Customer Churn backend — must come BEFORE the general /api proxy
   app.use(
     '/api/churn',

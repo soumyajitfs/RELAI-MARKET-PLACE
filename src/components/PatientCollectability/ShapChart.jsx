@@ -64,6 +64,8 @@ const ShapChart = ({ features, predictedCategory }) => {
   };
 
   const maxAbsImpact = Math.max(0.01, ...features.map(f => Math.abs(f.impact)));
+  const longestFeatureLen = features.reduce((max, f) => Math.max(max, String(f.name || '').length), 0);
+  const yAxisLabelWidth = Math.min(360, Math.max(170, longestFeatureLen * 7.5));
 
   const chartOptions = {
     indexAxis: 'y',
@@ -71,7 +73,7 @@ const ShapChart = ({ features, predictedCategory }) => {
     maintainAspectRatio: false,
     clip: false,
     layout: {
-      padding: { right: 40, left: 40, top: 8, bottom: 8 },
+      padding: { right: 40, left: 16, top: 8, bottom: 8 },
     },
     plugins: {
       title: { display: false },
@@ -127,7 +129,14 @@ const ShapChart = ({ features, predictedCategory }) => {
       y: {
         grid: { display: false },
         border: { display: false },
+        // Reserve enough width for long feature names so first characters are not clipped.
+        afterFit: (scale) => {
+          scale.width = Math.max(scale.width, yAxisLabelWidth);
+        },
         ticks: {
+          autoSkip: false,
+          maxRotation: 0,
+          minRotation: 0,
           font: { size: 12.5, weight: '600', family: "'Inter', sans-serif" },
           color: COLORS.tickText,
           padding: 6,
