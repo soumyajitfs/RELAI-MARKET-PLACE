@@ -27,7 +27,7 @@ const COLORS = {
   tooltipBg: '#0f172a',   // slate-900
 };
 
-const ShapChart = ({ features, predictedCategory }) => {
+const ShapChart = ({ features, predictedCategory, categoryLabel }) => {
   const isPos = (idx) => features[idx].impact >= 0;
   const chartRef = useRef(null);
   const [barYPositions, setBarYPositions] = useState([]);
@@ -64,8 +64,6 @@ const ShapChart = ({ features, predictedCategory }) => {
   };
 
   const maxAbsImpact = Math.max(0.01, ...features.map(f => Math.abs(f.impact)));
-  const longestFeatureLen = features.reduce((max, f) => Math.max(max, String(f.name || '').length), 0);
-  const yAxisLabelWidth = Math.min(360, Math.max(170, longestFeatureLen * 7.5));
 
   const chartOptions = {
     indexAxis: 'y',
@@ -73,7 +71,7 @@ const ShapChart = ({ features, predictedCategory }) => {
     maintainAspectRatio: false,
     clip: false,
     layout: {
-      padding: { right: 40, left: 16, top: 8, bottom: 8 },
+      padding: { right: 40, left: 12, top: 8, bottom: 8 },
     },
     plugins: {
       title: { display: false },
@@ -129,26 +127,17 @@ const ShapChart = ({ features, predictedCategory }) => {
       y: {
         grid: { display: false },
         border: { display: false },
-        // Reserve enough width for long feature names so first characters are not clipped.
-        afterFit: (scale) => {
-          scale.width = Math.max(scale.width, yAxisLabelWidth);
-        },
         ticks: {
-          autoSkip: false,
-          maxRotation: 0,
-          minRotation: 0,
-          font: { size: 12.5, weight: '600', family: "'Inter', sans-serif" },
-          color: COLORS.tickText,
-          padding: 6,
+          display: false,
         },
       },
     },
     animation: { duration: 700, easing: 'easeOutQuart' },
   };
 
-  const chartHeight = Math.max(features.length * 42, 380);
+  const chartHeight = Math.max(features.length * 48, 380);
 
-  const catLabel = (predictedCategory || '').toUpperCase();
+  const catLabel = String(categoryLabel || predictedCategory || '').toUpperCase();
 
   return (
     <div className="shap-chart-wrapper">
@@ -171,13 +160,39 @@ const ShapChart = ({ features, predictedCategory }) => {
 
         {/* ---- CHART ---- */}
         <div className="col-7">
-          <div style={{ height: `${chartHeight}px`, position: 'relative' }}>
-            <Bar
-              ref={chartRef}
-              data={chartData}
-              options={chartOptions}
-              plugins={[positionCapturePlugin.current]}
-            />
+          <div className="shap-left-body" style={{ height: `${chartHeight}px` }}>
+            <div className="shap-feature-col">
+              {features.map((f, idx) => (
+                <div
+                  key={`feature-${idx}`}
+                  className="shap-feature-name-row"
+                  style={
+                    barYPositions.length > idx
+                      ? {
+                          top: `${barYPositions[idx]}px`,
+                          transform: 'translateY(-50%)',
+                        }
+                      : { visibility: 'hidden' }
+                  }
+                  title={f.name}
+                >
+                  {f.name}
+                </div>
+              ))}
+            </div>
+
+            <div className="shap-feature-separator" />
+
+            <div className="shap-bars-col">
+              <div style={{ height: `${chartHeight}px`, position: 'relative' }}>
+                <Bar
+                  ref={chartRef}
+                  data={chartData}
+                  options={chartOptions}
+                  plugins={[positionCapturePlugin.current]}
+                />
+              </div>
+            </div>
           </div>
         </div>
 

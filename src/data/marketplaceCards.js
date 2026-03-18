@@ -111,6 +111,15 @@ const marketplaceCards = [
     modelType: 'Classification',
     enabled: true,
     route: '/late-payment-interest'
+  },
+  {
+    id: 'mortgage-underwriting',
+    title: 'Mortgage Underwriting Decision Model',
+    description: 'Predicts underwriting decisions using financial and risk data, with confidence scores to support consistent, risk-aware decision-making.',
+    vertical: 'BFS',
+    modelType: 'Classification',
+    enabled: true,
+    route: '/mortgage-underwriting'
   }
 ];
 

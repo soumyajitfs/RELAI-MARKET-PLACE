@@ -13,7 +13,9 @@ const CAT_THEME = {
 const ShapAnalysis = ({ shapData }) => {
   const features = shapData?.features || [];
   const predictedCategory = shapData?.predictedCategory || '';
+  const categoryDisplayLabel = shapData?.categoryDisplayLabel || predictedCategory;
   const categoryContextLabel = shapData?.categoryContextLabel || 'Propensity to Pay (P2P)';
+  const factorContextLabel = shapData?.factorContextLabel || 'P2P';
   const legendHighText = shapData?.legendHighText || 'Increases probability toward High P2P';
   const legendLowText = shapData?.legendLowText || 'Decreases probability toward Low P2P';
 
@@ -59,7 +61,8 @@ const ShapAnalysis = ({ shapData }) => {
 
   const theme = CAT_THEME[predictedCategory] || CAT_THEME.Low;
   const resolvedCategory = predictedCategory || 'Low';
-  const catBadgeLabel = `${resolvedCategory} — ${categoryContextLabel}`;
+  const resolvedDisplayCategory = categoryDisplayLabel || resolvedCategory;
+  const catBadgeLabel = `${resolvedDisplayCategory} — ${categoryContextLabel}`;
 
   const isHighType = predictedCategory === 'High' || predictedCategory === 'Super High';
   const isLow = predictedCategory === 'Low';
@@ -71,17 +74,20 @@ const ShapAnalysis = ({ shapData }) => {
     'Churn Risk': 'Churn Probability',
     'Late Payment Risk': 'Late Interest Probability',
     'Claim Denial': 'Claim Denial Probability',
+    'Underwriting Approval': 'Confidence Score Probability',
   };
   const probabilityLabel = probabilityLabelMap[categoryContextLabel] || 'P2P Probability';
 
-  const singleLabel =
-    predictedCategory === 'Super High' ? 'TOP SUPER HIGH FACTORS P2P'
-      : predictedCategory === 'High' ? 'TOP HIGH FACTORS P2P'
-        : predictedCategory === 'Low' ? 'TOP LOW FACTORS P2P'
-          : 'TOP MEDIUM FACTORS P2P';
+  const singleLabel = categoryDisplayLabel
+    ? `TOP ${String(categoryDisplayLabel).toUpperCase()} FACTORS ${factorContextLabel}`
+    : predictedCategory === 'Super High' ? `TOP SUPER HIGH FACTORS ${factorContextLabel}`
+      : predictedCategory === 'High' ? `TOP HIGH FACTORS ${factorContextLabel}`
+        : predictedCategory === 'Low' ? `TOP LOW FACTORS ${factorContextLabel}`
+          : `TOP MEDIUM FACTORS ${factorContextLabel}`;
 
   const allFactors = [...top3Toward, ...top3Against];
   const maxAbsAll = allFactors.length > 0 ? Math.max(...allFactors.map(t => Math.abs(t.impact))) : 1;
+  const useCompactProbBox = allFactors.length <= 1;
 
   return (
     <div className="shap-analysis-section">
@@ -103,7 +109,7 @@ const ShapAnalysis = ({ shapData }) => {
 
             {/* ─── LEFT: Chart + Legend ─── */}
             <div className="shap-col-chart">
-              <ShapChart features={features} predictedCategory={predictedCategory} />
+              <ShapChart features={features} predictedCategory={predictedCategory} categoryLabel={resolvedDisplayCategory} />
 
               <div className="shap-legend text-center mt-2">
                 <span className="legend-green">
@@ -205,7 +211,7 @@ const ShapAnalysis = ({ shapData }) => {
               <div className="info-divider" />
 
               {/* Predicted Probability */}
-              <div className="shap-prob-box-bottom">
+              <div className={`shap-prob-box-bottom ${useCompactProbBox ? 'shap-prob-box-bottom--compact' : ''}`}>
                 <span className="prob-label-bottom">{probabilityLabel}</span>
                 <span className="prob-value-bottom" style={{ color: theme.color }}>{pct}%</span>
               </div>

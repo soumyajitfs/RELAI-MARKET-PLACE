@@ -1149,6 +1149,20 @@ html, body {
   font-size: 14px;
 }
 
+/* Mortgage edit mode: keep selected dropdown text fully visible */
+.mortgage-edit-table td {
+  overflow: visible;
+  text-overflow: clip;
+}
+
+.mortgage-edit-table input[type="text"],
+.mortgage-edit-table input[type="number"],
+.mortgage-edit-table input[type="date"],
+.mortgage-edit-table select {
+  min-width: 170px;
+  font-size: 14px;
+}
+
 .data-table input:focus,
 .data-table select:focus {
   outline: none;

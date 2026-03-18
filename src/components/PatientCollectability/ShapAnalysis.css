@@ -110,6 +110,10 @@
   justify-content: center;
 }
 
+.shap-prob-box-bottom--compact {
+  flex: 0 0 auto;
+}
+
 .prob-label-bottom {
   font-size: 12px;
   font-weight: 800;
@@ -289,6 +293,46 @@
 /* ============================================= */
 .shap-chart-wrapper {
   position: relative;
+}
+
+.shap-left-body {
+  display: flex;
+  align-items: stretch;
+  position: relative;
+}
+
+.shap-feature-col {
+  position: relative;
+  width: 52%;
+  padding-right: 14px;
+  overflow: hidden;
+}
+
+.shap-feature-name-row {
+  position: absolute;
+  right: 14px;
+  left: 8px;
+  text-align: right;
+  font-size: 12px;
+  font-weight: 600;
+  color: #334155;
+  line-height: 1.15;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  overflow: hidden;
+  text-overflow: clip;
+}
+
+.shap-feature-separator {
+  flex: 0 0 2px;
+  width: 2px;
+  background: #e2e8f0;
+}
+
+.shap-bars-col {
+  width: 48%;
+  padding-left: 10px;
 }
 
 .shap-chart-wrapper .col-5 {

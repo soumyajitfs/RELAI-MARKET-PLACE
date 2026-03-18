@@ -137,6 +137,23 @@ module.exports = function (app) {
     })
   );
 
+  // Underwriter backend — must come BEFORE the general /api proxy
+  app.use(
+    '/api/uw',
+    createProxyMiddleware({
+      target: 'https://ml-market-backend-underwriter.azurewebsites.net',
+      changeOrigin: true,
+      secure: false,
+      logLevel: 'debug',
+      onProxyRes: function (proxyRes, req, res) {
+        console.log('[Proxy-UW] Response from:', req.url, 'Status:', proxyRes.statusCode);
+      },
+      onError: function (err, req, res) {
+        console.error('[Proxy-UW] Error:', err.message);
+      },
+    })
+  );
+
   // Healthcare (Patient Collectability) backend
   app.use(
     '/api',

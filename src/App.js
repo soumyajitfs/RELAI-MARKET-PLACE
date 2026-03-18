@@ -13,6 +13,7 @@ import SalesOptimizationPage from './pages/SalesOptimizationPage';
 import LatePaymentInterestPage from './pages/LatePaymentInterestPage';
 import UnderDevelopmentPage from './pages/UnderDevelopmentPage';
 import ClaimsDenialPage from './pages/ClaimsDenialPage';
+import MortgageUnderwritingPage from './pages/MortgageUnderwritingPage';
 
 // Import styles
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -35,6 +36,7 @@ function App() {
             <Route path="/claims-denial" element={<ClaimsDenialPage />} />
             <Route path="/sales-optimization" element={<SalesOptimizationPage />} />
             <Route path="/late-payment-interest" element={<LatePaymentInterestPage />} />
+            <Route path="/mortgage-underwriting" element={<MortgageUnderwritingPage />} />
             <Route path="/under-development/:cardTitle?" element={<UnderDevelopmentPage />} />
           </Routes>
         </MainLayout>
