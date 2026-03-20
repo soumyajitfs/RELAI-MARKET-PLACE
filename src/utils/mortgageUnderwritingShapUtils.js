@@ -61,7 +61,7 @@ export const buildMortgageUnderwritingShapData = (row) => {
     categoryDisplayLabel,
     probability,
     categoryContextLabel: 'Underwriting Approval',
-    factorContextLabel: 'APPROVAL',
+    factorContextLabel: '',
     legendHighText: 'Increases probability toward Higher likelihood of Approval',
     legendLowText: 'Increases probability toward Lower likelihood of Approval',
   };

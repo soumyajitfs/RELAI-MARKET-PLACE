@@ -2,7 +2,10 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
 import MainLayout from './components/Layout/MainLayout';
+import RequireAuth from './components/auth/RequireAuth';
 import LandingPage from './pages/LandingPage';
+import LoginPage from './pages/LoginPage';
+import AuthCallbackPage from './pages/AuthCallbackPage';
 import PatientCollectabilityPage from './pages/PatientCollectabilityPage';
 import UtilityPropensityPage from './pages/UtilityPropensityPage';
 import RpcPage from './pages/RpcPage';
@@ -21,25 +24,35 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import './styles/global.css';
 
 function App() {
+  const withLayout = (page) => (
+    <RequireAuth>
+      <MainLayout>{page}</MainLayout>
+    </RequireAuth>
+  );
+
   return (
     <AppProvider>
       <Router>
-        <MainLayout>
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/patient-collectability" element={<PatientCollectabilityPage />} />
-            <Route path="/utility-propensity" element={<UtilityPropensityPage />} />
-            <Route path="/rpc-contact" element={<RpcPage />} />
-            <Route path="/aml-alert" element={<AmlAlertPage />} />
-            <Route path="/customer-churn" element={<CustomerChurnPage />} />
-            <Route path="/collectability-model" element={<CollectabilityPage />} />
-            <Route path="/claims-denial" element={<ClaimsDenialPage />} />
-            <Route path="/sales-optimization" element={<SalesOptimizationPage />} />
-            <Route path="/late-payment-interest" element={<LatePaymentInterestPage />} />
-            <Route path="/mortgage-underwriting" element={<MortgageUnderwritingPage />} />
-            <Route path="/under-development/:cardTitle?" element={<UnderDevelopmentPage />} />
-          </Routes>
-        </MainLayout>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/auth/callback" element={<AuthCallbackPage />} />
+
+          <Route path="/" element={withLayout(<LandingPage />)} />
+          <Route path="/dashboard" element={withLayout(<LandingPage />)} />
+          <Route path="/patient-collectability" element={withLayout(<PatientCollectabilityPage />)} />
+          <Route path="/utility-propensity" element={withLayout(<UtilityPropensityPage />)} />
+          <Route path="/rpc-contact" element={withLayout(<RpcPage />)} />
+          <Route path="/aml-alert" element={withLayout(<AmlAlertPage />)} />
+          <Route path="/customer-churn" element={withLayout(<CustomerChurnPage />)} />
+          <Route path="/collectability-model" element={withLayout(<CollectabilityPage />)} />
+          <Route path="/claims-denial" element={withLayout(<ClaimsDenialPage />)} />
+          <Route path="/sales-optimization" element={withLayout(<SalesOptimizationPage />)} />
+          <Route path="/late-payment-interest" element={withLayout(<LatePaymentInterestPage />)} />
+          <Route path="/mortgage-underwriting" element={withLayout(<MortgageUnderwritingPage />)} />
+          <Route path="/under-development/:cardTitle?" element={withLayout(<UnderDevelopmentPage />)} />
+
+          <Route path="*" element={<LoginPage />} />
+        </Routes>
       </Router>
     </AppProvider>
   );

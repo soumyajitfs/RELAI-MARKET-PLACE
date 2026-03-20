@@ -15,7 +15,7 @@ const ShapAnalysis = ({ shapData }) => {
   const predictedCategory = shapData?.predictedCategory || '';
   const categoryDisplayLabel = shapData?.categoryDisplayLabel || predictedCategory;
   const categoryContextLabel = shapData?.categoryContextLabel || 'Propensity to Pay (P2P)';
-  const factorContextLabel = shapData?.factorContextLabel || 'P2P';
+  const factorContextLabel = shapData?.factorContextLabel || '';
   const legendHighText = shapData?.legendHighText || 'Increases probability toward High P2P';
   const legendLowText = shapData?.legendLowText || 'Decreases probability toward Low P2P';
 
@@ -78,12 +78,15 @@ const ShapAnalysis = ({ shapData }) => {
   };
   const probabilityLabel = probabilityLabelMap[categoryContextLabel] || 'P2P Probability';
 
+  const withFactorContext = (text) => (
+    factorContextLabel ? `${text} ${factorContextLabel}` : text
+  );
   const singleLabel = categoryDisplayLabel
-    ? `TOP ${String(categoryDisplayLabel).toUpperCase()} FACTORS ${factorContextLabel}`
-    : predictedCategory === 'Super High' ? `TOP SUPER HIGH FACTORS ${factorContextLabel}`
-      : predictedCategory === 'High' ? `TOP HIGH FACTORS ${factorContextLabel}`
-        : predictedCategory === 'Low' ? `TOP LOW FACTORS ${factorContextLabel}`
-          : `TOP MEDIUM FACTORS ${factorContextLabel}`;
+    ? withFactorContext(`TOP ${String(categoryDisplayLabel).toUpperCase()} FACTORS`)
+    : predictedCategory === 'Super High' ? withFactorContext('TOP SUPER HIGH FACTORS')
+      : predictedCategory === 'High' ? withFactorContext('TOP HIGH FACTORS')
+        : predictedCategory === 'Low' ? withFactorContext('TOP LOW FACTORS')
+          : withFactorContext('TOP MEDIUM FACTORS');
 
   const allFactors = [...top3Toward, ...top3Against];
   const maxAbsAll = allFactors.length > 0 ? Math.max(...allFactors.map(t => Math.abs(t.impact))) : 1;

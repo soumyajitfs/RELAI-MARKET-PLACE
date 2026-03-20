@@ -191,13 +191,14 @@ export const buildShapData = (account) => {
   return {
     facsNumber: account.facsNumber,
     predictedCategory,
+    factorContextLabel: 'P2P',
     baseValue: Math.round(baseValue * 1000) / 1000,
     shapSum: Math.round(shapSum * 1000) / 1000,
     logOdds: Math.round(logOdds * 1000) / 1000,
     probability,
     features,
-    legendHighText: 'Increases probability toward High Collectability',
-    legendLowText: 'Increases probability toward Low Collectability',
+    legendHighText: 'Increases probability toward High P2P',
+    legendLowText: 'Decreases probability toward Low P2P',
   };
 };
 

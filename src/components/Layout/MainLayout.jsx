@@ -10,9 +10,8 @@ const MainLayout = ({ children }) => {
   const { sidebarOpen } = state;
   const location = useLocation();
 
-  // Hide sidebar on inner pages (any route other than the landing page)
-  const isLandingPage = location.pathname === '/';
-
+  // Hide sidebar on inner pages (any route other than dashboard/landing)
+  const isLandingPage = location.pathname === '/' || location.pathname === '/dashboard';
   return (
     <div className="app-container">
       <Header />

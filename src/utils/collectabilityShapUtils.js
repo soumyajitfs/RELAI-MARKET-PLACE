@@ -55,6 +55,8 @@ export const buildCollectabilityShapData = (row) => {
     predictedCategory,
     probability,
     categoryContextLabel: 'Collectability',
+    legendHighText: 'Increases probability toward High Collectability',
+    legendLowText: 'Increases probability toward Low Collectability',
   };
 };
 

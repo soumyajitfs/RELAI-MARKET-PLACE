@@ -43,9 +43,10 @@ const MortgageUnderwritingModelBanner = () => {
                 Output
               </div>
               <div className="output-badges">
-                <span className="badge-high">High Approval</span>
-                <span className="badge-medium">Medium Approval</span>
-                <span className="badge-low">Low Approval</span>
+                <span className="badge-high">Approved</span>
+                <span className="badge-medium">Declined</span>
+                <span className="badge-low">Cancelled</span>
+                <span className="badge-medium">Suspended</span>
               </div>
             </div>
           </div>

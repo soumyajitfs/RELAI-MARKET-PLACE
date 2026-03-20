@@ -1,10 +1,19 @@
 import React from 'react';
 import { useAppContext } from '../../context/AppContext';
+import { useMsal, useIsAuthenticated } from '@azure/msal-react';
 import { verticals } from '../../data/marketplaceCards';
 
 const Sidebar = () => {
   const { state, actions } = useAppContext();
   const { selectedVertical, sidebarOpen } = state;
+  const { instance } = useMsal();
+  const isAuthenticated = useIsAuthenticated();
+
+  const handleLogout = () => {
+    instance.logoutRedirect({
+      postLogoutRedirectUri: `${window.location.origin}/login`,
+    });
+  };
 
   return (
     <>
@@ -48,6 +57,15 @@ const Sidebar = () => {
           ))}
         </nav>
       </div>
+
+      {isAuthenticated && (
+        <div className="sidebar-footer">
+          <button type="button" className="sidebar-logout-btn" onClick={handleLogout}>
+            <i className="bi bi-box-arrow-right"></i>
+            <span>Logout</span>
+          </button>
+        </div>
+      )}
     </aside>
     </>
   );
