@@ -10,6 +10,11 @@ const Sidebar = () => {
   const isAuthenticated = useIsAuthenticated();
 
   const handleLogout = () => {
+    try {
+      localStorage.removeItem('msal_id_token');
+    } catch (_) {
+      // ignore
+    }
     instance.logoutRedirect({
       postLogoutRedirectUri: `${window.location.origin}/login`,
     });

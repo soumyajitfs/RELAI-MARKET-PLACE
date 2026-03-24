@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
 import MainLayout from './components/Layout/MainLayout';
 import RequireAuth from './components/auth/RequireAuth';
@@ -51,7 +51,8 @@ function App() {
           <Route path="/mortgage-underwriting" element={withLayout(<MortgageUnderwritingPage />)} />
           <Route path="/under-development/:cardTitle?" element={withLayout(<UnderDevelopmentPage />)} />
 
-          <Route path="*" element={<LoginPage />} />
+          {/* Unknown paths: send to home; RequireAuth sends unauthenticated users to /login */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
     </AppProvider>

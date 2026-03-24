@@ -16,7 +16,8 @@ export const msalConfig = {
     redirectUri: getRedirectUri(),
   },
   cache: {
-    cacheLocation: 'sessionStorage',
+    // Persist login across browser sessions / new tabs (until logout or token expiry).
+    cacheLocation: 'localStorage',
     storeAuthStateInCookie: false,
   },
 };

@@ -2,11 +2,22 @@ const AUTH_TOKEN = 'underwriter889';
 
 const INTERNAL_KEYS = new Set([
   '__rowId',
+  'Application ID',
   'decision',
   'confidence',
   'confidencePercent',
   'shapValues',
 ]);
+
+const normalizeApplicantRow = (row, idx) => {
+  const applicantId = row.Applicant_ID ?? row['Application ID'];
+  return {
+    ...row,
+    Applicant_ID: applicantId,
+    'Application ID': applicantId,
+    __rowId: `${applicantId || 'app'}-${idx}`,
+  };
+};
 
 const underwritingRequest = async (path, options) => {
   try {
@@ -43,7 +54,7 @@ export const fetchUnderwritingAccounts = async () => {
   }
 
   const rows = (json.Response.ResponseInfo?.data || []).slice(0, 5);
-  return rows.map((row, idx) => ({ ...row, __rowId: `${row['Application ID'] || 'app'}-${idx}` }));
+  return rows.map((row, idx) => normalizeApplicantRow(row, idx));
 };
 
 const transformPredictionResult = (apiResult) => {
@@ -92,6 +103,16 @@ export const predictUnderwritingAccounts = async (rows, useDefaultFive = false) 
   const raw = json.Response.ResponseInfo?.data || [];
   const transformed = raw.map(transformPredictionResult);
 
-  // Backend response has no application identifier, so merge by returned order.
-  return rows.map((row, idx) => ({ ...row, ...(transformed[idx] || {}) }));
+  const predByApplicantId = new Map();
+  raw.forEach((item, idx) => {
+    if (item?.Applicant_ID != null) {
+      predByApplicantId.set(item.Applicant_ID, transformed[idx]);
+    }
+  });
+
+  return rows.map((row, idx) => {
+    const id = row.Applicant_ID ?? row['Application ID'];
+    const pred = predByApplicantId.get(id) ?? transformed[idx];
+    return pred ? { ...row, ...pred } : row;
+  });
 };

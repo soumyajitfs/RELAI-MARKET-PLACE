@@ -31,6 +31,30 @@ const resolveFeatureInfo = (row, feature) => {
   return { name: prettifyFeatureName(feature), value: null };
 };
 
+/** Maps backend decision text to SHAP chart category (High/Low/Medium) and badge label. */
+const decisionToShapDisplay = (decisionRaw) => {
+  const d = String(decisionRaw || '')
+    .trim()
+    .toLowerCase();
+  if (d === 'approved') {
+    return { predictedCategory: 'High', categoryDisplayLabel: 'Approved' };
+  }
+  if (d === 'cancelled') {
+    return { predictedCategory: 'Low', categoryDisplayLabel: 'Cancelled' };
+  }
+  if (d === 'declined') {
+    return { predictedCategory: 'Low', categoryDisplayLabel: 'Declined' };
+  }
+  if (d === 'suspended') {
+    return { predictedCategory: 'Medium', categoryDisplayLabel: 'Suspended' };
+  }
+  const fallback =
+    decisionRaw && String(decisionRaw).trim()
+      ? String(decisionRaw).charAt(0).toUpperCase() + String(decisionRaw).slice(1).toLowerCase()
+      : 'Unknown';
+  return { predictedCategory: 'Low', categoryDisplayLabel: fallback };
+};
+
 export const buildMortgageUnderwritingShapData = (row) => {
   if (!row || !Array.isArray(row.shapValues) || row.shapValues.length === 0) return null;
 
@@ -49,13 +73,11 @@ export const buildMortgageUnderwritingShapData = (row) => {
     return Math.abs(b.impact) - Math.abs(a.impact);
   });
 
-  const decision = String(row.decision || '').toLowerCase();
-  const predictedCategory = decision === 'approved' ? 'High' : 'Low';
-  const categoryDisplayLabel = decision === 'approved' ? 'Approved' : 'Cancelled';
+  const { predictedCategory, categoryDisplayLabel } = decisionToShapDisplay(row.decision);
   const probability = row.confidence != null ? row.confidence : ((row.confidencePercent || 0) / 100);
 
   return {
-    facsNumber: row['Application ID'],
+    facsNumber: row['Application ID'] ?? row.Applicant_ID,
     features,
     predictedCategory,
     categoryDisplayLabel,

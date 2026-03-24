@@ -8,27 +8,16 @@ const AuthCallbackPage = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    let isMounted = true;
-    instance.handleRedirectPromise()
-      .then((response) => {
-        const account = response?.account || instance.getAllAccounts()[0];
-        if (account) {
-          instance.setActiveAccount(account);
-        }
-        if (response?.idToken) {
-          sessionStorage.setItem('msal_id_token', response.idToken);
-        }
-        if (isMounted) {
-          navigate('/dashboard', { replace: true });
-        }
-      })
-      .catch((err) => {
-        if (!isMounted) return;
-        setError(err?.message || 'Authentication failed. Please try again.');
-      });
-    return () => {
-      isMounted = false;
-    };
+    // Redirect response is processed once in index.js (handleRedirectPromise).
+    const account = instance.getActiveAccount() || instance.getAllAccounts()[0];
+    if (account) {
+      instance.setActiveAccount(account);
+      navigate('/dashboard', { replace: true });
+    } else {
+      setError('Authentication failed. Please try again.');
+      const t = setTimeout(() => navigate('/login', { replace: true }), 2500);
+      return () => clearTimeout(t);
+    }
   }, [instance, navigate]);
 
   return (

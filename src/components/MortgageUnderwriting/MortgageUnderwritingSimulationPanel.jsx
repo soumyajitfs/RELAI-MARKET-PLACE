@@ -7,6 +7,7 @@ import ShapAnalysis from '../PatientCollectability/ShapAnalysis';
 
 const MORTGAGE_FIELD_RULES = {
   'Application ID': { type: 'text', editable: false, label: 'Application ID' },
+  Applicant_ID: { type: 'text', editable: false, label: 'Applicant ID' },
 
   Alternative_Credit_Flag: { type: 'enum', values: ['Yes', 'No'], label: 'Alternative_Credit_Flag' },
   Credit_Score: { type: 'int', min: 400, max: 850, label: 'Credit_Score' },
@@ -20,13 +21,12 @@ const MORTGAGE_FIELD_RULES = {
   Income_Variance_Percent: { type: 'float', min: 0, max: 35, maxExclusive: true, label: 'Income_Variance_Percent' },
   Verified_Liquid_Assets: { type: 'float', min: 0, label: 'Verified_Liquid_Assets' },
   Reserve_Months_x: { type: 'int', min: 0, label: 'Reserve_Months_x' },
-  VOE_Date: { type: 'date', min: '2020-01-01', max: '2035-12-31', label: 'VOE_Date' },
   Employer_Type: { type: 'enum', values: ['Government', 'Self_Employed', 'Private', 'Public'], label: 'Employer_Type' },
   Missing_Documents_Count: { type: 'int', min: 0, label: 'Missing_Documents_Count' },
   Cleaned_Income: { type: 'float', min: 0, label: 'Cleaned_Income' },
 
-  Appraisal_Condition_Issues: { type: 'int', min: 0, label: 'Appraisal_Condition_Issues' },
-  Final_LTV_After_Appraisal: { type: 'float', min: 0, max: 100, label: 'Final_LTV_After_Appraisal' },
+  Appraisal_Condition_Issues: { type: 'int', min: 0, label: 'Appraisal_Condition_Issues', optional: true },
+  Final_LTV_After_Appraisal: { type: 'float', min: 0, max: 100, label: 'Final_LTV_After_Appraisal', optional: true },
   Appraisal_Risk_Level: { type: 'enum', values: ['LOW', 'MEDIUM', 'HIGH'], label: 'Appraisal_Risk_Level' },
   Title_Risk_Level: { type: 'enum', values: ['LOW', 'MEDIUM', 'HIGH'], label: 'Title_Risk_Level' },
 
@@ -57,6 +57,8 @@ const isValuePresent = (value) => value !== '' && value != null;
 const validateMortgageValue = (field, value) => {
   const rule = MORTGAGE_FIELD_RULES[field];
   if (!rule || rule.editable === false) return null;
+
+  if (rule.optional && !isValuePresent(value)) return null;
 
   if (rule.type === 'enum') {
     if (!rule.values.includes(String(value))) {
@@ -194,7 +196,7 @@ const MortgageUnderwritingSimulationPanel = () => {
     for (const row of draftRows) {
       for (const [field, rule] of Object.entries(fieldRulesWithEdit)) {
         if (!rule.editable) continue;
-        if (!isValuePresent(row[field])) {
+        if (!rule.optional && !isValuePresent(row[field])) {
           actions.showToast({
             message: `"${rule.label}" cannot be empty. (Application ${row['Application ID']})`,
             type: 'warning',

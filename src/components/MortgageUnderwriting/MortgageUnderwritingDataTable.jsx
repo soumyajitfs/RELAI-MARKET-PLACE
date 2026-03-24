@@ -11,14 +11,16 @@ const INTERNAL_KEYS = new Set([
 const getDecisionClass = (decision) => {
   const d = String(decision || '').toLowerCase();
   if (d === 'approved') return 'high';
-  if (d === 'cancelled') return 'low';
+  if (d === 'cancelled' || d === 'declined') return 'low';
+  if (d === 'suspended') return 'medium';
   return 'medium';
 };
 
 const getDecisionColor = (decision) => {
   const d = String(decision || '').toLowerCase();
   if (d === 'approved') return '#2e7d32';
-  if (d === 'cancelled') return '#c62828';
+  if (d === 'cancelled' || d === 'declined') return '#c62828';
+  if (d === 'suspended') return '#b8860b';
   return '#b8860b';
 };
 
@@ -46,7 +48,7 @@ const MortgageUnderwritingDataTable = ({
     if (!sample) return [];
     return Object.keys(sample).filter((key) => {
       if (INTERNAL_KEYS.has(key)) return false;
-      if (key === 'Application ID') return false;
+      if (key === 'Application ID' || key === 'Applicant_ID') return false;
       return true;
     });
   }, [displayRows, baseRows]);

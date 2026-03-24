@@ -11,7 +11,7 @@ msalInstance.addEventCallback((event) => {
     }
 
     if (event.payload?.idToken) {
-      sessionStorage.setItem('msal_id_token', event.payload.idToken);
+      localStorage.setItem('msal_id_token', event.payload.idToken);
     }
   }
 });
